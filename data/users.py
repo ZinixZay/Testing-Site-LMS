@@ -14,6 +14,7 @@ class User(SqlAlchemyBase):
     hashed_password = sqlalchemy.Column(sqlalchemy.String)
     email = sqlalchemy.Column(sqlalchemy.String, unique=True)
     variants = orm.relationship("Variants", back_populates='user')
+    answers = orm.relationship("Answers", back_populates='user')
 
     def set_password(self, password):
         self.password = generate_password_hash(password)

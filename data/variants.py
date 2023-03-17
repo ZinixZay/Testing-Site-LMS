@@ -12,6 +12,7 @@ class Variant(SqlAlchemyBase):
     identifier = sqlalchemy.Column(sqlalchemy.String, unique=True)
     theme = sqlalchemy.Column(sqlalchemy.String)
     task_list = sqlalchemy.Column(sqlalchemy.String)
+    answers = orm.relationship("Answers", back_populates='variant')
     user = orm.relationship('User')
 
     def to_dict(self):
