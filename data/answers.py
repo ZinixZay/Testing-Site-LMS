@@ -9,8 +9,8 @@ class Answer(SqlAlchemyBase):
     __tablename__ = 'answers'
 
     id = sqlalchemy.Column(sqlalchemy.Integer, primary_key=True, autoincrement=True, index=True)
-    answered_id = orm.relationship(sqlalchemy.Integer, sqlalchemy.ForeignKey('users.id'))
-    variant_id = orm.relationship(sqlalchemy.Integer, sqlalchemy.ForeignKey('variants.id'))
+    answered_id = sqlalchemy.Column(sqlalchemy.Integer, sqlalchemy.ForeignKey('users.id'))
+    variant_id = sqlalchemy.Column(sqlalchemy.Integer, sqlalchemy.ForeignKey('variants.id'))
     answer = sqlalchemy.Column(sqlalchemy.String)
     user = orm.relationship('User')
     variant = orm.relationship('Variant')
