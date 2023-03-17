@@ -1,6 +1,6 @@
 import sqlalchemy
 from sqlalchemy import orm
-from db_session import SqlAlchemyBase
+from .db_session import SqlAlchemyBase
 from werkzeug.security import generate_password_hash, check_password_hash
 import json
 
