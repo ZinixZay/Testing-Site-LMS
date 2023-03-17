@@ -8,10 +8,11 @@ class Variant(SqlAlchemyBase):
 
     id = sqlalchemy.Column(sqlalchemy.Integer, primary_key=True, autoincrement=True, index=True)
     secrecy = sqlalchemy.Column(sqlalchemy.Boolean, default=0)
-    author = orm.relationship("User", back_populates='user')
+    author_id = orm.relationship(sqlalchemy.Integer, sqlalchemy.ForeignKey('users.id'))
     identifier = sqlalchemy.Column(sqlalchemy.String, unique=True)
     theme = sqlalchemy.Column(sqlalchemy.String)
     task_list = sqlalchemy.Column(sqlalchemy.String)
+    user = orm.relationship('User')
 
     def to_dict(self):
         res = {
