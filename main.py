@@ -61,5 +61,15 @@ def login():
     return flask.render_template('login.html', title='Авторизация', form=form)
 
 
+@app.route('/add_variant', methods=['GET', 'POST'])
+def add_variant():
+    if flask.request.method == 'POST':
+
+        print(flask.request.form)
+        return flask.redirect('/')
+    else:
+        return flask.render_template('add_variant.html')
+
+
 if __name__ == '__main__':
     app.run(debug=True, load_dotenv=True)
