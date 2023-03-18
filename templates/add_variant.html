@@ -9,19 +9,21 @@
 
             html =
             '<label>Вопрос:</label><br>\
-            <input type="text" name="question"><br>\
+            <textarea name="question" class="form-control" rows="4"></textarea><br>\
             <label>Правильный ответ:</label><br>\
-            <input type="text" name="answer"><br>\
+            <input type="text" name="answer" class="form-control"><br>\
             <label>Вложения:</label><br>\
             <input type="file" name="addition"><br>'
 
             const div = document.createElement("div")
+            div.className = "alert alert-dark"
+            div.role = "alert"
             taskStore = document.querySelector("#task-store")
             div.innerHTML += html
             taskStore.appendChild(div)
         }
     </script>
-
+    <br>
     <form action="" method="post" novalidate>
         <p><button type="button" class="btn btn-dark" onclick="addTask()">+</button></p>
         <p><div id="task-store"></div></p>
