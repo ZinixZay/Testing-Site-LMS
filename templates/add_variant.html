@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <script src="http://code.jquery.com/jquery-1.10.2.js"></script>
+    <script src="http://code.jquery.com/ui/1.11.2/jquery-ui.js"></script>
+    <script>
+        function addTask() {
+            console.log(2)
+
+            html =
+            '<label>Вопрос:</label><br>\
+            <input type="text" name="question"><br>\
+            <label>Правильный ответ:</label><br>\
+            <input type="text" name="answer"><br>\
+            <label>Вложения:</label><br>\
+            <input type="file" name="addition"><br>'
+
+            const div = document.createElement("div")
+            taskStore = document.querySelector("#task-store")
+            div.innerHTML += html
+            taskStore.appendChild(div)
+        }
+    </script>
+
+    <form action="" method="post" novalidate>
+        <p><button type="button" class="btn btn-dark" onclick="addTask()">+</button></p>
+        <p><div id="task-store"></div></p>
+        <p><input type="submit" class="btn btn-primary"></p>
+    </form>
+{% endblock %}
