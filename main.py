@@ -5,6 +5,7 @@ from lib import login_template
 from lib import register_template
 from data import db_session
 from core.database_functions import registrate_person
+import json
 
 
 app = flask.Flask(__name__)
@@ -24,7 +25,9 @@ def register():
     if form.validate_on_submit():
         if registrate_person(flask.request.form.to_dict()):
             return flask.redirect('/login')
-        return flask.redirect('/register')
+        return flask.render_template('register.html', title='Регистрация', form=form, message="Пользователь с таким "
+                                                                                              "логином или почтой уже"
+                                                                                              " существует")
     return flask.render_template('register.html', title='Регистрация', form=form)
 
 
