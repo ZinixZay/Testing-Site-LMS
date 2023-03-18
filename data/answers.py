@@ -12,8 +12,6 @@ class Answer(SqlAlchemyBase):
     answered_id = sqlalchemy.Column(sqlalchemy.Integer, sqlalchemy.ForeignKey('users.id'))
     variant_id = sqlalchemy.Column(sqlalchemy.Integer, sqlalchemy.ForeignKey('variants.id'))
     answer = sqlalchemy.Column(sqlalchemy.String)
-    user = orm.relationship('User')
-    variant = orm.relationship('Variant')
 
     def to_dict(self):
         res = {
