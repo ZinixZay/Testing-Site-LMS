@@ -23,9 +23,8 @@ def register():
     form = register_template.RegisterForm()
     if form.validate_on_submit():
         if registrate_person(flask.request.form.to_dict()):
-            return flask.redirect('/')
-        else:
-            return flask.redirect('/register')
+            return flask.redirect('/login')
+        return flask.redirect('/register')
     return flask.render_template('register.html', title='Регистрация', form=form)
 
 

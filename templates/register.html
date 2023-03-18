@@ -24,9 +24,9 @@
         </p>
 
         <p>
-            {{ form.hashed_password.label }}<br>
-            {{ form.hashed_password(class="form-control", type="password") }}<br>
-            {% for error in form.hashed_password.errors %}
+            {{ form.password.label }}<br>
+            {{ form.password(class="form-control", type="password") }}<br>
+            {% for error in form.password.errors %}
                 <div class="alert alert-danger" role="alert">
                     {{ error }}
                 </div>
