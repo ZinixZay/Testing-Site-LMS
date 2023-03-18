@@ -4,6 +4,7 @@ import dotenv
 from lib import login_template
 from lib import register_template
 from data import db_session
+from data.users import User
 
 
 app = flask.Flask(__name__)
@@ -17,10 +18,26 @@ def index():
     return ''
 
 
+def create_user(form: dict):
+    if not form:
+        return
+
+    session = db_session.create_session()
+    user = User()
+    user.role = form['role']
+    user.login = form['login']
+    user.hashed_password = form['hashed_password']
+    user.email = form['email']
+
+    session.add(user)
+    session.commit()
+
+
 @app.route('/register', methods=['GET', 'POST'])
 def register():
     form = register_template.RegisterForm()
     if form.validate_on_submit():
+        create_user(flask.request.form.to_dict())
         return flask.redirect('/')
     return flask.render_template('register.html', title='Регистрация', form=form)
 
