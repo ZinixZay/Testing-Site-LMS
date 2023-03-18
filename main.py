@@ -27,12 +27,15 @@ def load_user(user_id):
 
 @app.route('/')
 def index():
-    print(current_user.role)
-    return ''
+    if current_user.is_authenticated:
+        return f'Пользователь зареган. login - {current_user.login}'
+    return 'Пользователь не зареган'
 
 
 @app.route('/register', methods=['GET', 'POST'])
 def register():
+    if current_user.is_authenticated:
+        return flask.redirect('/')
     form = register_template.RegisterForm()
     if form.validate_on_submit():
         if registrate_person(flask.request.form.to_dict()):
@@ -45,12 +48,14 @@ def register():
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
+    if current_user.is_authenticated:
+        return flask.redirect('/')
     form = login_template.LoginForm()
     if form.validate_on_submit():
         user = login_person(flask.request.form.to_dict())
         if user:
             flask_login.login_user(user, remember=form.remember_me.data)
-            return "ASDHJASDJASHJD"
+            return
         return flask.render_template('login.html', title='Авторизация', form=form, message="Неверное имя пользователя "
                                                                                            "либо пароль")
     return flask.render_template('login.html', title='Авторизация', form=form)
