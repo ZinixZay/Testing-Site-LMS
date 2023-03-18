@@ -17,7 +17,7 @@ class User(SqlAlchemyBase):
     answers = orm.relationship("Answers", back_populates='user')
 
     def set_password(self, password):
-        self.password = generate_password_hash(password)
+        self.hashed_password = generate_password_hash(password)
 
     def check_passord(self, password):
         return check_password_hash(self.hashed_password, password)

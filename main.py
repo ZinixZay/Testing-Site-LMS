@@ -4,6 +4,7 @@ import dotenv
 from lib import login_template
 from lib import register_template
 from data import db_session
+from core.database_functions import registrate_person
 
 
 app = flask.Flask(__name__)
@@ -21,7 +22,10 @@ def index():
 def register():
     form = register_template.RegisterForm()
     if form.validate_on_submit():
-        return flask.redirect('/')
+        if registrate_person(flask.request.form.to_dict()):
+            return flask.redirect('/')
+        else:
+            return flask.redirect('/register')
     return flask.render_template('register.html', title='Регистрация', form=form)
 
 
