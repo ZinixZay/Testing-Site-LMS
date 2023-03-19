@@ -5,7 +5,7 @@ import flask_login
 from lib import login_template
 from lib import register_template
 from data import db_session
-from core.database_functions import registrate_person, login_person
+from core import database_functions
 from data.users import User
 from flask_login import current_user
 
@@ -38,7 +38,7 @@ def register():
         return flask.redirect('/')
     form = register_template.RegisterForm()
     if form.validate_on_submit():
-        if registrate_person(flask.request.form.to_dict()):
+        if database_functions.registrate_person(flask.request.form.to_dict()):
             return flask.redirect('/login')
         return flask.render_template('register.html', title='Регистрация', form=form, message="Пользователь с таким "
                                                                                               "логином или почтой уже"
@@ -52,10 +52,10 @@ def login():
         return flask.redirect('/')
     form = login_template.LoginForm()
     if form.validate_on_submit():
-        user = login_person(flask.request.form.to_dict())
+        user = database_functions.login_person(flask.request.form.to_dict())
         if user:
             flask_login.login_user(user, remember=form.remember_me.data)
-            return
+            return flask.redirect('/')
         return flask.render_template('login.html', title='Авторизация', form=form, message="Неверное имя пользователя "
                                                                                            "либо пароль")
     return flask.render_template('login.html', title='Авторизация', form=form)
@@ -63,9 +63,17 @@ def login():
 
 @app.route('/add_variant', methods=['GET', 'POST'])
 def add_variant():
-    if flask.request.method == 'POST':
+    if flask.request.method == 'GET':
+        try:
+            flask_login.current_user.role
+        except AttributeError:
+            return 'Вы не залогинены', 400
+    if flask.request.method == 'GET' and not flask_login.current_user.role == 'teacher':
+        return 'Вы не учитель', 400
 
+    if flask.request.method == 'POST':
         print(flask.request.form)
+        database_functions.add_variant(flask.request.form)
         return flask.redirect('/')
     else:
         return flask.render_template('add_variant.html')
