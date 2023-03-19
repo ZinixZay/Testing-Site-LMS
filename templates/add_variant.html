@@ -7,8 +7,14 @@
         function addTask() {
             console.log(2)
 
+            var num = document.getElementsByClassName('task-manager').length
+
             html =
-            '<label>Вопрос:</label><br>\
+            '<span>\
+                <b class="task-counter"></b>\
+                <button class="delete-btn btn btn-dark" style="float: right;">&ndash;</button><br>\
+            </span><br>\
+            <label>Вопрос:</label><br>\
             <textarea name="question" class="form-control" rows="4"></textarea><br>\
             <label>Правильный ответ:</label><br>\
             <input type="text" name="answer" class="form-control"><br>\
@@ -16,17 +22,67 @@
             <input type="file" name="addition"><br>'
 
             const div = document.createElement("div")
-            div.className = "alert alert-dark"
+            div.className = "alert alert-dark task-manager"
             div.role = "alert"
             taskStore = document.querySelector("#task-store")
             div.innerHTML += html
             taskStore.appendChild(div)
         }
     </script>
+    <script>
+        $(document).on('click', '.delete-btn', function(){
+          $(this).parent().parent().remove();
+        });
+    </script>
+
+    <style>
+        #task-store {
+            counter-reset: css-counter 0;
+        }
+
+        .task-counter {
+            counter-increment: css-counter 1;
+        }
+
+        .task-counter:before {
+            content: counter(css-counter) ".";
+        }
+
+    </style>
+
     <br>
     <form action="" method="post" novalidate>
+        <div class="alert alert-primary">
+            <div>
+                <select name="theme" class="form-control">
+                    <option value="math">Математика</option>
+                    <option value="info">Информатика</option>
+                    <option value="rus">Русский Язык</option>
+                    <option value="phys">Физика</option>
+                    <option value="chem">Химия</option>
+                    <option value="bio">Биология</option>
+                    <option value="geo">География</option>
+                    <option value="soc">Обществознание</option>
+                    <option value="lit">Литература</option>
+                    <option value="hist">История</option>
+                    <option value="eng">Английский Язык</option>
+                    <option value="germ">Немецкий Язык</option>
+                    <option value="fren">Французский Язык</option>
+                    <option value="span">Испанский Язык</option>
+                </select>
+            </div>
+            <br>
+            <div>
+                <input class="form-check-input" type="checkbox"
+                       id="flexSwitchCheckDefault" style="transform: scale(1)" name="secrecy">
+                <label class="form-check-label" for="flexSwitchCheckDefault">
+                    Показывать ошибки ученикам после тестирования
+                </label>
+            </div>
+        </div>
+        <br>
+        <div id="task-store"></div>
         <p><button type="button" class="btn btn-dark" onclick="addTask()">+</button></p>
-        <p><div id="task-store"></div></p>
         <p><input type="submit" class="btn btn-primary"></p>
     </form>
 {% endblock %}
