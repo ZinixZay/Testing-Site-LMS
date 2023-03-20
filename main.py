@@ -1,7 +1,9 @@
+import io
 import flask
 import os
 import dotenv
 import flask_login
+from PIL import Image
 from lib import login_template
 from lib import register_template
 from data import db_session
@@ -72,12 +74,10 @@ def add_variant():
         return 'Вы не учитель', 400
 
     if flask.request.method == 'POST':
-        print(flask.request.form)
-        database_functions.add_variant(flask.request.form)
+        database_functions.add_variant(flask.request.form, flask.request.files)
         return flask.redirect('/')
     else:
         return flask.render_template('add_variant.html')
-
 
 if __name__ == '__main__':
     app.run(debug=True, load_dotenv=True)

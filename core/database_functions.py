@@ -1,4 +1,5 @@
 import flask
+import os
 import sqlalchemy
 import flask_login
 import data
@@ -55,7 +56,7 @@ def add_task(task_info: dict) -> bool:
     return True
 
 
-def add_variant(form):
+def add_variant(form, files):
     db_session = data.db_session.create_session()
 
     previous_task_id = db_session.query(sqlalchemy.func.max(data.tasks.Task.id)).first()[0]
@@ -64,9 +65,15 @@ def add_variant(form):
     print(previous_task_id)
 
     tasks = []
-    task_keys = ['question', 'answer', 'addition']
+    task_keys = ['question', 'answer']
     for key in task_keys:
         tasks.append(form.getlist(key))
+    paths = []
+    for file in files.getlist('addition'):
+        file_path = './uploads/' + file.filename
+        file.save(file_path)
+        paths.append(file_path)
+    tasks.append(paths)
     tasks = list(zip(*tasks))
 
     variant = data.variants.Variant()
