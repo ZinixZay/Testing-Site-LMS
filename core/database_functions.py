@@ -68,16 +68,19 @@ def add_variant(form, files):
     task_keys = ['question', 'answer']
     for key in task_keys:
         tasks.append(form.getlist(key))
-    paths = []
-    for file in files.getlist('addition'):
+    paths = ["" for _ in range(len(files.getlist('addition')))]
+    for index, file in enumerate(files.getlist('addition')):
+        if not file:
+            continue
         file_path = './uploads/' + file.filename
         file.save(file_path)
-        paths.append(file_path)
+        paths[index] = file_path
     tasks.append(paths)
     tasks = list(zip(*tasks))
 
     variant = data.variants.Variant()
     variant.secrecy = True if form.get('secrecy') == 'on' else False
+    variant.title = form.get('title')
     variant.theme = form.get('theme')
     variant.author_id = flask_login.current_user.id
     variant.task_list = ', '.join([str(previous_task_id + 1 + i) for i in range(len(tasks))])
