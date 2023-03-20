@@ -1,6 +1,7 @@
 {% extends "base.html" %}
 
 {% block content %}
+    {{ form.hidden_tag() }}
     <script src="http://code.jquery.com/jquery-1.10.2.js"></script>
     <script src="http://code.jquery.com/ui/1.11.2/jquery-ui.js"></script>
     <script>
@@ -53,36 +54,28 @@
     <br>
     <form action="" method="post" novalidate enctype="multipart/form-data" id="variant-form">
         <div class="alert alert-primary">
-            <div>
-                <select name="theme" class="form-control">
-                    <option value="math">Математика</option>
-                    <option value="info">Информатика</option>
-                    <option value="rus">Русский Язык</option>
-                    <option value="phys">Физика</option>
-                    <option value="chem">Химия</option>
-                    <option value="bio">Биология</option>
-                    <option value="geo">География</option>
-                    <option value="soc">Обществознание</option>
-                    <option value="lit">Литература</option>
-                    <option value="hist">История</option>
-                    <option value="eng">Английский Язык</option>
-                    <option value="germ">Немецкий Язык</option>
-                    <option value="fren">Французский Язык</option>
-                    <option value="span">Испанский Язык</option>
-                </select>
-            </div>
-            <br>
-            <div>
-                <input class="form-check-input" type="checkbox"
-                       id="flexSwitchCheckDefault" style="transform: scale(1)" name="secrecy">
-                <label class="form-check-label" for="flexSwitchCheckDefault">
-                    Показывать ошибки ученикам после тестирования
-                </label>
-            </div>
+            <p>
+                {{ form.title.label }}<br>
+                {{ form.title(class="form-control") }}
+                {% for error in form.title.errors %}
+                <div class="alert alert-danger" role="alert">
+                    {{ error }}
+                </div>
+                {% endfor %}
+            </p>
+            <p>
+                {{ form.theme.label }}<br>
+                {{ form.theme(class="form-control") }}
+            </p>
+
+            <p>
+                {{ form.secrecy(class="form-check-input", type="checkbox", id="flexSwitchCheckDefault") }}
+                {{ form.secrecy.label(class="form-check-label", for="flexSwitchCheckDefault") }}
+            </p>
         </div>
         <br>
         <div id="task-store"></div>
         <p><button type="button" class="btn btn-dark" onclick="addTask()">+</button></p>
-        <p><input type="submit" class="btn btn-primary"></p>
+        <p>{{ form.submit(type="submit", class="btn btn-primary") }}</p>
     </form>
 {% endblock %}
