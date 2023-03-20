@@ -6,6 +6,7 @@ import flask_login
 from PIL import Image
 from lib import login_template
 from lib import register_template
+from lib import variant_constructor_template
 from data import db_session
 from core import database_functions
 from data.users import User
@@ -73,11 +74,12 @@ def add_variant():
     if flask.request.method == 'GET' and not flask_login.current_user.role == 'teacher':
         return 'Вы не учитель', 400
 
-    if flask.request.method == 'POST':
+    form = variant_constructor_template.ConstructorForm()
+    if flask.request.method == "POST" and form.title.validate(form):
         database_functions.add_variant(flask.request.form, flask.request.files)
         return flask.redirect('/')
-    else:
-        return flask.render_template('add_variant.html')
+    return flask.render_template('add_variant.html', form=form)
+
 
 if __name__ == '__main__':
     app.run(debug=True, load_dotenv=True)
