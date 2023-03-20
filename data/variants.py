@@ -8,6 +8,7 @@ class Variant(SqlAlchemyBase):
 
     id = sqlalchemy.Column(sqlalchemy.Integer, primary_key=True, autoincrement=True, index=True)
     secrecy = sqlalchemy.Column(sqlalchemy.Boolean, default=0)
+    title = sqlalchemy.Column(sqlalchemy.String)
     author_id = sqlalchemy.Column(sqlalchemy.Integer, sqlalchemy.ForeignKey('users.id'))
     theme = sqlalchemy.Column(sqlalchemy.String)
     task_list = sqlalchemy.Column(sqlalchemy.String)
@@ -17,7 +18,7 @@ class Variant(SqlAlchemyBase):
             "id": self.id,
             "secrecy": self.secrecy,
             "author": self.author,
-            "identigier": self.identifier,
+            "title": self.title,
             "theme": self.theme,
             "task_list": self.task_list
         }
