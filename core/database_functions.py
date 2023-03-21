@@ -1,6 +1,4 @@
-import flask
-import os
-import sqlalchemy
+import json
 import flask_login
 import data
 
@@ -42,27 +40,8 @@ def login_person(person_info: dict):
     return False
 
 
-def add_task(task_info: dict) -> bool:
-    try:
-        db_session = data.db_session.create_session()
-        task = data.tasks.Task(question=task_info['question'],
-                    answer=task_info['answer'],
-                    addition=task_info['addition'])
-
-        db_session.add(task)
-        db_session.commit()
-    except Exception:
-        return False
-    return True
-
-
 def add_variant(form, files):
     db_session = data.db_session.create_session()
-
-    previous_task_id = db_session.query(sqlalchemy.func.max(data.tasks.Task.id)).first()[0]
-    if not previous_task_id:
-        previous_task_id = 0
-    print(previous_task_id)
 
     tasks = []
     task_keys = ['question', 'answer']
@@ -78,17 +57,19 @@ def add_variant(form, files):
     tasks.append(paths)
     tasks = list(zip(*tasks))
 
+    task_info = dict()
+    for i in range(len(tasks)):
+        task_info[i] = {'question': tasks[i][0],
+                        'answer': tasks[i][1],
+                        'addition': tasks[i][2]}
+    task_info = json.dumps(task_info)
+
     variant = data.variants.Variant()
     variant.secrecy = True if form.get('secrecy') == 'on' else False
     variant.title = form.get('title')
     variant.theme = form.get('theme')
     variant.author_id = flask_login.current_user.id
-    variant.task_list = ', '.join([str(previous_task_id + 1 + i) for i in range(len(tasks))])
+    variant.task = task_info
 
     db_session.add(variant)
     db_session.commit()
-
-    for task in tasks:
-        add_task({'question': task[0],
-                  'answer': task[1],
-                  'addition': task[2]})
