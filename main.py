@@ -31,8 +31,8 @@ def load_user(user_id):
 @app.route('/')
 def index():
     if current_user.is_authenticated:
-        return f'Пользователь зареган. login - {current_user.login}'
-    return 'Пользователь не зареган'
+        return flask.render_template('personal_cabinet.html', user=current_user)
+    return flask.redirect('/register')
 
 
 @app.route('/register', methods=['GET', 'POST'])
