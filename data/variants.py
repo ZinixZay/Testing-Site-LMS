@@ -11,7 +11,7 @@ class Variant(SqlAlchemyBase):
     title = sqlalchemy.Column(sqlalchemy.String)
     author_id = sqlalchemy.Column(sqlalchemy.Integer, sqlalchemy.ForeignKey('users.id'))
     theme = sqlalchemy.Column(sqlalchemy.String)
-    task_list = sqlalchemy.Column(sqlalchemy.String)
+    task = sqlalchemy.Column(sqlalchemy.String)
 
     def to_dict(self):
         res = {
