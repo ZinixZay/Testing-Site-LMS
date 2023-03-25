@@ -96,3 +96,27 @@ def add_answers(form, variant_id: int):
 
         db_session.add(answer)
     db_session.commit()
+
+
+def get_variant_by_search_request(search_type: str, search_request: str) -> list[int]:
+    db_session = data.db_session.create_session()
+
+    if search_type == 'id':
+        variant = db_session.query(data.variants.Variant).\
+            filter(data.variants.Variant.id == int(search_request)).first()
+        if variant:
+            return [variant]
+    elif search_type == 'title':
+        variants = db_session.query(data.variants.Variant).\
+            filter(data.variants.Variant.title.contains(search_request)).all()
+        variants = [i for i in variants]
+        if variants:
+            return variants
+    elif search_type == 'theme':
+        variants = db_session.query(data.variants.Variant).\
+            filter(data.variants.Variant.theme.contains(search_request.lower())).all()
+        variants = [i for i in variants]
+        if variants:
+            return variants
+
+    return []
