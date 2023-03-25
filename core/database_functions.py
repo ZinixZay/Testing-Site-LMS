@@ -73,3 +73,26 @@ def add_variant(form, files):
 
     db_session.add(variant)
     db_session.commit()
+
+
+def get_tasks_by_variant_id(variant_id: int):
+    db_session = data.db_session.create_session()
+
+    task = json.loads(
+        db_session.query(data.variants.Variant.task).filter(data.variants.Variant.id == variant_id).first()[0]
+    )
+    return task
+
+
+def add_answers(form, variant_id: int):
+    db_session = data.db_session.create_session()
+
+    for index, answer_text in enumerate(form.getlist('answer')):
+        answer = data.answers.Answer()
+        answer.answered_id = flask_login.current_user.id
+        answer.variant_id = variant_id
+        answer.task_id = index + 1
+        answer.answer = answer_text
+
+        db_session.add(answer)
+    db_session.commit()
