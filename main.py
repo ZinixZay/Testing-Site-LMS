@@ -7,6 +7,7 @@ from PIL import Image
 from lib import login_template
 from lib import register_template
 from lib import variant_constructor_template
+from lib import search_variant_template
 from data import db_session
 from core import database_functions
 from data.users import User
@@ -95,6 +96,16 @@ def solve_variant(variant_id: int):
         tasks = database_functions.get_tasks_by_variant_id(variant_id)
         print(tasks)
         return flask.render_template('solve_variant.html', tasks=tasks)
+
+
+@app.route('/search_variant', methods=['GET', 'POST'])
+def search_variant():
+    form = search_variant_template.SearchForm()
+    variants = []
+    if form.validate_on_submit():
+        variants = database_functions.get_variant_by_search_request(flask.request.form.get('search_type'),
+                                                                    flask.request.form.get('search_request'))
+    return flask.render_template('search_variant.html', form=form, variants=variants)
 
 
 if __name__ == '__main__':
