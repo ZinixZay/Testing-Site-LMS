@@ -1,0 +1,47 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <form action="" method="post" novalidate>
+        {{ form.hidden_tag() }}
+
+        <br>
+        <div class="alert alert-primary">
+
+            <p>
+                {{ form.search_type.label }}
+                {{ form.search_type(class="form-control") }}
+            </p>
+
+            <div>
+                {{ form.search_request.label }}
+                {{ form.search_request(class="form-control") }}
+                {% for error in form.search_request.errors %}
+                    <br>
+                    <div class="alert alert-danger" role="alert">
+                        {{ error }}
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+        <p>{{ form.submit(type="submit", class="btn btn-primary") }}</p>
+    </form>
+
+    {% for variant in variants %}
+        <div class="alert alert-info">
+            <h2>{{ variant.title }}</h2><br>
+
+            <div class="alert alert-info">
+                <h5>
+                    <b>Тема:</b> {{ variant.theme }}
+                </h5>
+            </div>
+
+            <div class="alert alert-info">
+                <h5>
+                    <b>Идентификатор:</b> {{ variant.id }}
+                </h5>
+            </div>
+            <a class="btn btn-primary" role="button" href="/solve_variant/{{ variant.id }}">Перейти</a>
+        </div>
+    {% endfor %}
+{% endblock %}
