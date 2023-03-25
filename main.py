@@ -81,5 +81,21 @@ def add_variant():
     return flask.render_template('add_variant.html', form=form)
 
 
+@app.route('/uploads/<filename>')
+def return_image(filename: str):
+    return flask.send_from_directory('./uploads', filename)
+
+
+@app.route('/solve_variant/<variant_id>', methods=['GET', 'POST'])
+def solve_variant(variant_id: int):
+    if flask.request.method == "POST":
+        database_functions.add_answers(flask.request.form, variant_id)
+        return flask.redirect('/')
+    if flask.request.method == 'GET':
+        tasks = database_functions.get_tasks_by_variant_id(variant_id)
+        print(tasks)
+        return flask.render_template('solve_variant.html', tasks=tasks)
+
+
 if __name__ == '__main__':
     app.run(debug=True, load_dotenv=True)
