@@ -31,7 +31,7 @@ def load_user(user_id):
 @app.route('/')
 def index():
     if current_user.is_authenticated:
-        return flask.render_template('personal_cabinet.html', user=current_user)
+        return flask.render_template('cabinet.html', user=current_user)
     return flask.redirect('/register')
 
 
@@ -62,6 +62,17 @@ def login():
         return flask.render_template('login.html', title='Авторизация', form=form, message="Неверное имя пользователя "
                                                                                            "либо пароль")
     return flask.render_template('login.html', title='Авторизация', form=form)
+
+
+@app.route('/logout', methods=['GET'])
+def logout():
+    flask_login.logout_user()
+    return flask.redirect('/login')
+
+
+@app.route('/cabinet', methods=['GET'])
+def cabinet():
+    return flask.render_template('cabinet.html')
 
 
 @app.route('/add_variant', methods=['GET', 'POST'])
