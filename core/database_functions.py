@@ -19,8 +19,8 @@ def registrate_person(person_info: dict) -> bool:
             db_sess = data.db_session.create_session()
 
             user = data.users.User(role=person_info['role'],
-                        login=person_info['login'],
-                        email=person_info['email'])
+                                   login=person_info['login'],
+                                   email=person_info['email'])
             user.set_password(person_info['password'])
 
             db_sess.add(user)
@@ -78,6 +78,8 @@ def add_variant(form, files):
 def get_all_variants(user):
     data.db_session.global_init("db/data.db")
     db_sess = data.db_session.create_session()
-    variants = db_sess.query(data.users.User).filter(data.users.User.login == user.login).all()
+    variants = db_sess.query(data.variants.Variant).filter(data.variants.Variant.author_id == user.id).all()
+    vrs = list()
     for i in variants:
-        print(i)
+        vrs.append(i.title)
+    return vrs

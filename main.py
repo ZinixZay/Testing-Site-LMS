@@ -77,8 +77,12 @@ def cabinet():
 
 @app.route('/variants', methods=['GET'])
 def variants():
-    all_variants = database_functions.get_all_variants(current_user)
-    return flask.render_template('variants.html', variants=all_variants)
+    if current_user.is_authenticated:
+        from lib import variants_template
+        form = variants_template.VariantsForm()
+        return flask.render_template('variants.html', form=form)
+    else:
+        return flask.redirect('/login')
 
 
 @app.route('/add_variant', methods=['GET', 'POST'])
