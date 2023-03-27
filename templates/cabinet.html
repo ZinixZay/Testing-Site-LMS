@@ -8,7 +8,7 @@
     Role: {{user.role.capitalize()}}
   </div>
   {% if user.role == "teacher" %}
-  <a type="button" href="" class="btn btn-info center-block btn-lg">Мои варианты</a>
+  <a type="button" href="/variants" class="btn btn-info center-block btn-lg">Мои варианты</a>
   {% else %}
   <a type="button" class="btn btn-info center-block btn-lg">Мои ответы</a>
   {% endif%}

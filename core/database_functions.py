@@ -73,3 +73,11 @@ def add_variant(form, files):
 
     db_session.add(variant)
     db_session.commit()
+
+
+def get_all_variants(user):
+    data.db_session.global_init("db/data.db")
+    db_sess = data.db_session.create_session()
+    variants = db_sess.query(data.users.User).filter(data.users.User.login == user.login).all()
+    for i in variants:
+        print(i)
