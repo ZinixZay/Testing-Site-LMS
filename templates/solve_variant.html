@@ -23,9 +23,7 @@
                 <b class="task-counter"></b><br>
 
                 {% if task['question'] %}
-                    <p>
-                        <label>{{ task['question'] }}</label>
-                    </p>
+                    <div>{{ task['question'] }}</div><br>
                 {% else %}
                     <br>
                 {% endif %}
@@ -38,7 +36,7 @@
                     </p>
                 {% endif %}
 
-                <label>Ответ:</label><br>
+                <div>Ответ:</div>
                 <input type="text" name="answer"><br>
             </div>
         {% endfor %}
