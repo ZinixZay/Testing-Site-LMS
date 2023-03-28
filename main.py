@@ -1,4 +1,3 @@
-import io
 import flask
 import os
 import dotenv
@@ -31,15 +30,15 @@ def load_user(user_id):
 @app.route('/')
 def index():
     if current_user.is_authenticated:
-        return flask.render_template('personal_cabinet.html', user=current_user)
-    return flask.redirect('/register')
+        return f'Пользователь зареган. login - {current_user.login}'
+    return 'Пользователь не зареган'
 
 
 @app.route('/register', methods=['GET', 'POST'])
 def register():
     if current_user.is_authenticated:
         return flask.redirect('/')
-    form = lib.register_template.RegisterForm()
+    form = register_template.RegisterForm()
     if form.validate_on_submit():
         if database_functions.registrate_person(flask.request.form.to_dict()):
             return flask.redirect('/login')
@@ -53,7 +52,7 @@ def register():
 def login():
     if current_user.is_authenticated:
         return flask.redirect('/')
-    form = lib.login_template.LoginForm()
+    form = login_template.LoginForm()
     if form.validate_on_submit():
         user = database_functions.login_person(flask.request.form.to_dict())
         if user:
@@ -74,7 +73,7 @@ def add_variant():
     if flask.request.method == 'GET' and not flask_login.current_user.role == 'teacher':
         return 'Вы не учитель', 400
 
-    form = lib.variant_constructor_template.ConstructorForm()
+    form = variant_constructor_template.ConstructorForm()
     if flask.request.method == "POST" and form.title.validate(form):
         database_functions.add_variant(flask.request.form, flask.request.files)
         return flask.redirect('/')
@@ -99,7 +98,7 @@ def solve_variant(variant_id: int):
 
 @app.route('/search_variant', methods=['GET', 'POST'])
 def search_variant():
-    form = lib.search_variant_template.SearchForm()
+    form = search_variant_template.SearchForm()
     variants = []
     if form.validate_on_submit():
         variants = database_functions.get_variant_by_search_request(flask.request.form.get('search_type'),
