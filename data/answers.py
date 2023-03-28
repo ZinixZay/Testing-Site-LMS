@@ -11,6 +11,7 @@ class Answer(SqlAlchemyBase):
     id = sqlalchemy.Column(sqlalchemy.Integer, primary_key=True, autoincrement=True, index=True)
     answered_id = sqlalchemy.Column(sqlalchemy.Integer, sqlalchemy.ForeignKey('users.id'))
     variant_id = sqlalchemy.Column(sqlalchemy.Integer, sqlalchemy.ForeignKey('variants.id'))
+    task_id = sqlalchemy.Column(sqlalchemy.Integer)
     answer = sqlalchemy.Column(sqlalchemy.String)
 
     def to_dict(self):

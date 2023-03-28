@@ -1,0 +1,48 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <style>
+        #task-store {
+            counter-reset: css-counter 0;
+        }
+
+        .task-counter {
+            counter-increment: css-counter 1;
+        }
+
+        .task-counter:before {
+            content: counter(css-counter) ".";
+        }
+    </style>
+
+    <br>
+    <form action="" method="post" novalidate>
+        <div id="task-store">
+        {% for task in tasks.values() %}
+            <div class="alert alert-dark task-manager">
+                <b class="task-counter"></b><br>
+
+                {% if task['question'] %}
+                    <p>
+                        <label>{{ task['question'] }}</label>
+                    </p>
+                {% else %}
+                    <br>
+                {% endif %}
+
+                {% if task['addition'] %}
+                    <p>
+                        <a href="{{ '../' + task['addition'] }}" target="_blank">
+                            <img src="{{ '../' + task['addition'] }}" width="400" height="400" onclick="enlargeImage()">
+                        </a>
+                    </p>
+                {% endif %}
+
+                <label>Ответ:</label><br>
+                <input type="text" name="answer"><br>
+            </div>
+        {% endfor %}
+        </div>
+        <p><input type="submit" class="btn btn-primary"></p>
+    </form>
+{% endblock %}

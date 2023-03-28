@@ -7,6 +7,7 @@ from PIL import Image
 from lib import login_template
 from lib import register_template
 from lib import variant_constructor_template
+from lib import search_variant_template
 from data import db_session
 from core import database_functions
 from data.users import User
@@ -79,6 +80,32 @@ def add_variant():
         database_functions.add_variant(flask.request.form, flask.request.files)
         return flask.redirect('/')
     return flask.render_template('add_variant.html', form=form)
+
+
+@app.route('/uploads/<filename>')
+def return_image(filename: str):
+    return flask.send_from_directory('./uploads', filename)
+
+
+@app.route('/solve_variant/<variant_id>', methods=['GET', 'POST'])
+def solve_variant(variant_id: int):
+    if flask.request.method == "POST":
+        database_functions.add_answers(flask.request.form, variant_id)
+        return flask.redirect('/')
+    if flask.request.method == 'GET':
+        tasks = database_functions.get_tasks_by_variant_id(variant_id)
+        print(tasks)
+        return flask.render_template('solve_variant.html', tasks=tasks)
+
+
+@app.route('/search_variant', methods=['GET', 'POST'])
+def search_variant():
+    form = search_variant_template.SearchForm()
+    variants = []
+    if form.validate_on_submit():
+        variants = database_functions.get_variant_by_search_request(flask.request.form.get('search_type'),
+                                                                    flask.request.form.get('search_request'))
+    return flask.render_template('search_variant.html', form=form, variants=variants)
 
 
 if __name__ == '__main__':
