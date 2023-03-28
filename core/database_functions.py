@@ -1,13 +1,16 @@
 import json
 import flask_login
-import data
+from data import db_session
+from data import answers
+from data import users
+from data import variants
 
 
 def check_user_exists(login: str, email: str = '') -> bool:
-    data.db_session.global_init("db/data.db")
-    db_sess = data.db_session.create_session()
-    return db_sess.query(data.users.User).filter(data.users.User.login == login).all() or \
-           db_sess.query(data.users.User).filter(data.users.User.email == email).all()
+    db_session.global_init("db/data.db")
+    db_sess = db_session.create_session()
+    return db_sess.query(users.User).filter(users.User.login == login).all() or \
+           db_sess.query(users.User).filter(users.User.email == email).all()
 
 
 def registrate_person(person_info: dict) -> bool:
@@ -15,10 +18,10 @@ def registrate_person(person_info: dict) -> bool:
         return False
     else:
         try:
-            data.db_session.global_init("db/data.db")
-            db_sess = data.db_session.create_session()
+            db_session.global_init("db/data.db")
+            db_sess = db_session.create_session()
 
-            user = data.users.User(role=person_info['role'],
+            user = users.User(role=person_info['role'],
                         login=person_info['login'],
                         email=person_info['email'])
             user.set_password(person_info['password'])
@@ -32,16 +35,16 @@ def registrate_person(person_info: dict) -> bool:
 
 def login_person(person_info: dict):
     if check_user_exists(person_info['login']):
-        data.db_session.global_init("db/data.db")
-        db_sess = data.db_session.create_session()
-        user = db_sess.query(data.users.User).filter(data.users.User.login == person_info['login']).first()
+        db_session.global_init("db/data.db")
+        db_sess = db_session.create_session()
+        user = db_sess.query(users.User).filter(users.User.login == person_info['login']).first()
         if user.check_passord(person_info['password']):
             return user
     return False
 
 
 def add_variant(form, files):
-    db_session = data.db_session.create_session()
+    db_sess = db_session.create_session()
 
     tasks = []
     task_keys = ['question', 'answer']
@@ -64,75 +67,75 @@ def add_variant(form, files):
                         'addition': tasks[i][2]}
     task_info = json.dumps(task_info)
 
-    variant = data.variants.Variant()
+    variant = variants.Variant()
     variant.secrecy = True if form.get('secrecy') == 'on' else False
     variant.title = form.get('title')
     variant.theme = form.get('theme')
     variant.author_id = flask_login.current_user.id
     variant.task_list = task_info
 
-    db_session.add(variant)
-    db_session.commit()
+    db_sess.add(variant)
+    db_sess.commit()
 
 
 def get_tasks_by_variant_id(variant_id: int):
-    db_session = data.db_session.create_session()
+    db_sess = db_session.create_session()
 
     task = json.loads(
-        db_session.query(data.variants.Variant.task).filter(data.variants.Variant.id == variant_id).first()[0]
+        db_sess.query(variants.Variant.task).filter(variants.Variant.id == variant_id).first()[0]
     )
     return task
 
 
 def add_answers(form, variant_id: int):
-    db_session = data.db_session.create_session()
+    db_sess = db_session.create_session()
 
     for index, answer_text in enumerate(form.getlist('answer')):
-        answer = data.answers.Answer()
+        answer = answers.Answer()
         answer.answered_id = flask_login.current_user.id
         answer.variant_id = variant_id
         answer.task_id = index + 1
         answer.answer = answer_text
 
-        db_session.add(answer)
-    db_session.commit()
+        db_sess.add(answer)
+    db_sess.commit()
 
 
-def get_variant_by_search_request(search_type: str, search_request: str) -> list[data.variants.Variant]:
-    db_session = data.db_session.create_session()
+def get_variant_by_search_request(search_type: str, search_request: str) -> list[variants.Variant]:
+    db_sess = db_session.create_session()
 
     if search_type == 'id':
-        variant = db_session.query(data.variants.Variant).\
-            filter(data.variants.Variant.id == int(search_request)).first()
+        variant = db_sess.query(variants.Variant).\
+            filter(variants.Variant.id == int(search_request)).first()
         if variant:
             return [variant]
     elif search_type == 'title':
-        variants = db_session.query(data.variants.Variant).\
-            filter(data.variants.Variant.title.contains(search_request)).all()
-        variants = [i for i in variants]
-        if variants:
-            return variants
+        _variants = db_sess.query(variants.Variant).\
+            filter(variants.Variant.title.contains(search_request)).all()
+        _variants = [i for i in variants]
+        if _variants:
+            return _variants
     elif search_type == 'theme':
-        variants = db_session.query(data.variants.Variant).\
-            filter(data.variants.Variant.theme.contains(search_request.lower())).all()
-        variants = [i for i in variants]
-        if variants:
-            return variants
+        _variants = db_sess.query(variants.Variant).\
+            filter(variants.Variant.theme.contains(search_request.lower())).all()
+        _variants = [i for i in variants]
+        if _variants:
+            return _variants
 
     return []
 
 
 def get_answers_by_variant_id(variant_id: int):
-    db_session = data.db_session.create_session()
-    answers = db_session.query(data.answers.Answer).\
-        filter(data.answers.Answer.id == variant_id,
-               data.answers.Answer.answered_id == flask_login.current_user.id).all()
+    db_sess = db_session.create_session()
+    _answers = db_sess.query(answers.Answer).\
+        filter(answers.Answer.id == variant_id,
+               answers.Answer.answered_id == flask_login.current_user.id).all()
     tasks = json.loads(
-        db_session.query(data.variants.Variant.task).filter(data.variants.Variant.id == variant_id).first()[0]
+        db_sess.query(variants.Variant.task).filter(variants.Variant.id == variant_id).first()[0]
     )
 
     result = []
-    for answer, task in zip(answers, tasks.values()):
+    for answer, task in zip(_answers, tasks.values()):
         result.append({'answer_id': answer.id,
                        'answer': answer.answer,
                        'is_correct': answer.answer.lower() == task['answer'].lower()})

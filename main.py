@@ -3,16 +3,15 @@ import flask
 import os
 import dotenv
 import flask_login
-from PIL import Image
-from lib import login_template
-from lib import register_template
-from lib import variant_constructor_template
-from lib import search_variant_template
-from data import db_session
 from core import database_functions
-from data.users import User
 from flask_login import current_user
 
+from data import db_session
+from data import users
+from lib import login_template
+from lib import register_template
+from lib import search_variant_template
+from lib import variant_constructor_template
 
 app = flask.Flask(__name__)
 db_session.global_init("db/data.db")
@@ -26,7 +25,7 @@ login_manager.init_app(app)
 @login_manager.user_loader
 def load_user(user_id):
     db_sess = db_session.create_session()
-    return db_sess.query(User).get(user_id)
+    return db_sess.query(users.User).get(user_id)
 
 
 @app.route('/')
@@ -40,7 +39,7 @@ def index():
 def register():
     if current_user.is_authenticated:
         return flask.redirect('/')
-    form = register_template.RegisterForm()
+    form = lib.register_template.RegisterForm()
     if form.validate_on_submit():
         if database_functions.registrate_person(flask.request.form.to_dict()):
             return flask.redirect('/login')
@@ -54,7 +53,7 @@ def register():
 def login():
     if current_user.is_authenticated:
         return flask.redirect('/')
-    form = login_template.LoginForm()
+    form = lib.login_template.LoginForm()
     if form.validate_on_submit():
         user = database_functions.login_person(flask.request.form.to_dict())
         if user:
@@ -75,7 +74,7 @@ def add_variant():
     if flask.request.method == 'GET' and not flask_login.current_user.role == 'teacher':
         return 'Вы не учитель', 400
 
-    form = variant_constructor_template.ConstructorForm()
+    form = lib.variant_constructor_template.ConstructorForm()
     if flask.request.method == "POST" and form.title.validate(form):
         database_functions.add_variant(flask.request.form, flask.request.files)
         return flask.redirect('/')
@@ -100,7 +99,7 @@ def solve_variant(variant_id: int):
 
 @app.route('/search_variant', methods=['GET', 'POST'])
 def search_variant():
-    form = search_variant_template.SearchForm()
+    form = lib.search_variant_template.SearchForm()
     variants = []
     if form.validate_on_submit():
         variants = database_functions.get_variant_by_search_request(flask.request.form.get('search_type'),
