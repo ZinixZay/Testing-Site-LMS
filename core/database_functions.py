@@ -98,7 +98,7 @@ def add_answers(form, variant_id: int):
     db_session.commit()
 
 
-def get_variant_by_search_request(search_type: str, search_request: str) -> list[int]:
+def get_variant_by_search_request(search_type: str, search_request: str) -> list[data.variants.Variant]:
     db_session = data.db_session.create_session()
 
     if search_type == 'id':
@@ -120,3 +120,21 @@ def get_variant_by_search_request(search_type: str, search_request: str) -> list
             return variants
 
     return []
+
+
+def get_answers_by_variant_id(variant_id: int):
+    db_session = data.db_session.create_session()
+    answers = db_session.query(data.answers.Answer).\
+        filter(data.answers.Answer.id == variant_id,
+               data.answers.Answer.answered_id == flask_login.current_user.id).all()
+    tasks = json.loads(
+        db_session.query(data.variants.Variant.task).filter(data.variants.Variant.id == variant_id).first()[0]
+    )
+
+    result = []
+    for answer, task in zip(answers, tasks.values()):
+        result.append({'answer_id': answer.id,
+                       'answer': answer.answer,
+                       'is_correct': answer.answer.lower() == task['answer'].lower()})
+    print(result)
+    return result
