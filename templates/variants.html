@@ -1,0 +1,10 @@
+{% extends "base.html" %}
+
+{% block content %}
+<form action="" method="post" novalidate>
+    {{ form.hidden_tag() }}
+    {{ form.variant.label }}
+    {{ form.variant }}
+</form>
+<a type="button" href="/" class="btn btn-info center-block btn-lg">Вернуться в кабинет</a>
+{% endblock %}

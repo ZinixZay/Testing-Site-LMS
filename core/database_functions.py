@@ -141,3 +141,13 @@ def get_answers_by_variant_id(variant_id: int):
                        'is_correct': answer.answer.lower() == task['answer'].lower()})
     print(result)
     return result
+
+
+def get_all_variants(user):
+    data.db_session.global_init("db/data.db")
+    db_sess = data.db_session.create_session()
+    variants = db_sess.query(data.variants.Variant).filter(data.variants.Variant.author_id == user.id).all()
+    vrs = list()
+    for i in variants:
+        vrs.append(i.title)
+    return vrs
