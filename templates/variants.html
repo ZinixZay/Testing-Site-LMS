@@ -1,10 +1,9 @@
 {% extends "base.html" %}
 
 {% block content %}
-<form action="" method="post" novalidate>
-    {{ form.hidden_tag() }}
-    {{ form.variant.label }}
-    {{ form.variant }}
-</form>
+{% for var in variants %}
+<label for="floatingInput">{{loop.index}}: {{var}}</label>
+<button type="button" value={{var}} class="btn btn-success">Get result</button><br>
+{% endfor %}
 <a type="button" href="/" class="btn btn-info center-block btn-lg">Вернуться в кабинет</a>
 {% endblock %}

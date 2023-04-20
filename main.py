@@ -31,8 +31,8 @@ def load_user(user_id):
 @app.route('/')
 def index():
     if current_user.is_authenticated:
-        return f'Пользователь зареган. login - {current_user.login}'
-    return 'Пользователь не зареган'
+        return flask.redirect('/cabinet')
+    return flask.redirect('/login')
 
 
 @app.route('/register', methods=['GET', 'POST'])
@@ -72,15 +72,14 @@ def logout():
 
 @app.route('/cabinet', methods=['GET'])
 def cabinet():
-    return flask.render_template('cabinet.html')
+    return flask.render_template('cabinet.html', user=current_user)
 
 
 @app.route('/variants', methods=['GET'])
 def variants():
     if current_user.is_authenticated:
-        from lib import variants_template
-        form = variants_template.VariantsForm()
-        return flask.render_template('variants.html', form=form)
+        vs = database_functions.get_all_variants(current_user)
+        return flask.render_template('variants.html', variants=vs)
     else:
         return flask.redirect('/login')
 
