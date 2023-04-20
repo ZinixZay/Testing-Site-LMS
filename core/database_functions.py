@@ -72,7 +72,7 @@ def add_variant(form, files):
     variant.title = form.get('title')
     variant.theme = form.get('theme')
     variant.author_id = flask_login.current_user.id
-    variant.task_list = task_info
+    variant.task = task_info
 
     db_sess.add(variant)
     db_sess.commit()
@@ -148,5 +148,44 @@ def get_all_variants(user):
     _variants = db_sess.query(variants.Variant).filter(variants.Variant.author_id == user.id).all()
     vrs = list()
     for i in _variants:
-        vrs.append(i.title)
+        vrs.append(i)
     return vrs
+
+
+def compare_variant(variant_id, user) -> list:
+    results = list()
+    db_session.global_init("db/data.db")
+    db_sess = db_session.create_session()
+    if user.role == 'teacher':
+        _true_answer = db_sess.query(variants.Variant.task).filter(variants.Variant.id == variant_id).one()
+        _answers = db_sess.query(answers.Answer).filter(answers.Answer.variant_id == variant_id).all()
+        for ans in _answers:
+            login = db_sess.query(users.User.login).filter(user.User.id == ans.answered_id).one()
+            answer_info = db_sess.query(answers.Answer.answer).filter(answers.Answer.id == ans.id).one()
+            result = {'login': login, 'answers': []}
+            for question, content in _true_answer.items():
+                if content['answer'] == answer_info[question]['answer']:
+                    correctness = True
+                else:
+                    correctness = False
+                result['answer'].append({'question': content['question'],
+                                         'answer': answer_info[question]['answer'],
+                                         'correctness': correctness})
+            results.append(result)
+        return results
+    else:
+        _true_answer = db_sess.query(variants.Variant.task).filter(variants.Variant.id == variant_id).one()
+        _answers = db_sess.query(answers.Answer).filter(answers.Answer.variant_id == variant_id).one()
+        for ans in _answers:
+            login = db_sess.query(users.User.login).filter(user.User.id == ans.answered_id).one()
+            answer_info = db_sess.query(answers.Answer.answer).filter(answers.Answer.id == ans.id).one()
+            result = {'login': login, 'answers': []}
+            for question, content in _true_answer.items():
+                if content['answer'] == answer_info[question]['answer']:
+                    correctness = True
+                else:
+                    correctness = False
+                result['answer'].append({'question': content['question'],
+                                         'answer': answer_info[question]['answer'],
+                                         'correctness': correctness})
+            results.append(result)
