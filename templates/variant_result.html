@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+
+{% block content %}
+    {% for answer in answers %}
+        <div class="alert alert-dark">
+            <p>Ученик:</p>
+            <h3 style="font-weight:bold">{{ answer['login'] }}</h3>
+            <div class="alert alert-dark">
+                <table class="table">
+                    <thead>
+                        <tr class="bg-secondary">
+                            <th scope="col">Вопрос</th>
+                            <th scope="col">Ответ</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for row in answer['answers'] %}
+                            {% if row['is_correct'] %}
+                                <tr class="bg-success">
+                                    <td scope="col">{{ row['question'] }}</td>
+                                    <td scope="col">{{ row['answer'] }}</td>
+                                </tr>
+                            {% else %}
+                                <tr class="bg-danger">
+                                    <td scope="col">{{ row['question'] }}</td>
+                                    <td scope="col">{{ row['answer'] }}</td>
+                                </tr>
+                            {% endif %}
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    {% endfor %}
+    <br>
+{% endblock %}
