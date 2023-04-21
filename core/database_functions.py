@@ -1,5 +1,7 @@
 import json
 import flask_login
+import sqlalchemy
+
 from data import db_session
 from data import answers
 from data import users
@@ -89,15 +91,17 @@ def get_tasks_by_variant_id(variant_id: int):
 
 def add_answers(form, variant_id: int):
     db_sess = db_session.create_session()
+    answer = answers.Answer()
+    answer.answered_id = flask_login.current_user.id
+    answer.variant_id = variant_id
+    _answer = {}
 
     for index, answer_text in enumerate(form.getlist('answer')):
-        answer = answers.Answer()
-        answer.answered_id = flask_login.current_user.id
-        answer.variant_id = variant_id
-        answer.task_id = index + 1
-        answer.answer = answer_text
+        _answer[str(index)] = answer_text
 
-        db_sess.add(answer)
+    answer.answer = str(_answer)
+
+    db_sess.add(answer)
     db_sess.commit()
 
 
@@ -156,36 +160,27 @@ def compare_variant(variant_id, user) -> list:
     results = list()
     db_session.global_init("db/data.db")
     db_sess = db_session.create_session()
-    if user.role == 'teacher':
-        _true_answer = db_sess.query(variants.Variant.task).filter(variants.Variant.id == variant_id).one()
-        _answers = db_sess.query(answers.Answer).filter(answers.Answer.variant_id == variant_id).all()
-        for ans in _answers:
-            login = db_sess.query(users.User.login).filter(user.User.id == ans.answered_id).one()
-            answer_info = db_sess.query(answers.Answer.answer).filter(answers.Answer.id == ans.id).one()
-            result = {'login': login, 'answers': []}
-            for question, content in _true_answer.items():
-                if content['answer'] == answer_info[question]['answer']:
-                    correctness = True
-                else:
-                    correctness = False
-                result['answer'].append({'question': content['question'],
-                                         'answer': answer_info[question]['answer'],
-                                         'correctness': correctness})
-            results.append(result)
-        return results
-    else:
-        _true_answer = db_sess.query(variants.Variant.task).filter(variants.Variant.id == variant_id).one()
-        _answers = db_sess.query(answers.Answer).filter(answers.Answer.variant_id == variant_id).one()
-        for ans in _answers:
-            login = db_sess.query(users.User.login).filter(user.User.id == ans.answered_id).one()
-            answer_info = db_sess.query(answers.Answer.answer).filter(answers.Answer.id == ans.id).one()
-            result = {'login': login, 'answers': []}
-            for question, content in _true_answer.items():
-                if content['answer'] == answer_info[question]['answer']:
-                    correctness = True
-                else:
-                    correctness = False
-                result['answer'].append({'question': content['question'],
-                                         'answer': answer_info[question]['answer'],
-                                         'correctness': correctness})
-            results.append(result)
+    _true_answer = json.loads(
+        db_sess.query(variants.Variant.task).filter(variants.Variant.id == variant_id).one()[0]
+    )
+    _answers = db_sess.query(answers.Answer).filter(answers.Answer.variant_id == variant_id).all()
+
+    if user.role == 'student':  # для ученика получаем последнюю работу
+        _answers = [_answers[-1]]
+
+    for ans in _answers:
+        login = db_sess.query(users.User.login).filter(users.User.id == ans.answered_id).one()[0]
+        answer_info = json.loads(
+            db_sess.query(answers.Answer.answer).filter(answers.Answer.id == ans.id).one()[0].replace("'", '"')
+        )
+        result = {'login': login, 'answers': []}
+        for _curr_true_answer, _curr_login_answer in zip(_true_answer.items(), answer_info.values()):
+            if _curr_true_answer[1]['answer'] == _curr_login_answer:
+                correctness = True
+            else:
+                correctness = False
+            result['answers'].append({'question': _curr_true_answer[1]['question'],
+                                      'answer': _curr_login_answer,
+                                      'is_correct': correctness})
+        results.append(result)
+    return results
