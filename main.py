@@ -127,5 +127,12 @@ def search_variant():
     return flask.render_template('search_variant.html', form=form, variants=variants)
 
 
+@app.route('/result/<variant_id>', methods=['GET'])
+def result(variant_id: int):
+    data = database_functions.compare_variant(variant_id, current_user)
+    print(data)
+    return flask.render_template('variant_result.html', answers=data)
+
+
 if __name__ == '__main__':
     app.run(debug=True, load_dotenv=True)
