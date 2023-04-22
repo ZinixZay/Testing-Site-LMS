@@ -72,7 +72,9 @@ def logout():
 
 @app.route('/cabinet', methods=['GET'])
 def cabinet():
-    return flask.render_template('cabinet.html', user=current_user)
+    if current_user.is_authenticated:
+        return flask.render_template('cabinet.html', user=current_user)
+    return flask.redirect('/login')
 
 
 @app.route('/variants', methods=['GET'])
@@ -129,9 +131,10 @@ def search_variant():
 
 @app.route('/result/<variant_id>', methods=['GET'])
 def result(variant_id: int):
-    data = database_functions.compare_variant(variant_id, current_user)
-    print(data)
-    return flask.render_template('variant_result.html', answers=data)
+    if current_user.is_authenticated:
+        data = database_functions.compare_variant(variant_id, current_user)
+        return flask.render_template('variant_result.html', answers=data)
+    return ''
 
 
 if __name__ == '__main__':
