@@ -116,13 +116,13 @@ def get_variant_by_search_request(search_type: str, search_request: str) -> list
     elif search_type == 'title':
         _variants = db_sess.query(variants.Variant).\
             filter(variants.Variant.title.contains(search_request)).all()
-        _variants = [i for i in variants]
+        _variants = [i for i in _variants]
         if _variants:
             return _variants
     elif search_type == 'theme':
         _variants = db_sess.query(variants.Variant).\
             filter(variants.Variant.theme.contains(search_request.lower())).all()
-        _variants = [i for i in variants]
+        _variants = [i for i in _variants]
         if _variants:
             return _variants
 
