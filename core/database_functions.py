@@ -45,36 +45,38 @@ def login_person(person_info: dict):
     return False
 
 
-def add_variant(form, files):
+def add_variant(json_dict: dict, files):
+    if not json_dict:
+        return
+
     db_sess = db_session.create_session()
 
-    tasks = []
-    task_keys = ['question', 'answer']
-    for key in task_keys:
-        tasks.append(form.getlist(key))
-    paths = ["" for _ in range(len(files.getlist('addition')))]
-    for index, file in enumerate(files.getlist('addition')):
-        if not file:
-            continue
-        file_path = './uploads/' + file.filename
-        file.save(file_path)
-        paths[index] = file_path
-    tasks.append(paths)
-    tasks = list(zip(*tasks))
-
-    task_info = dict()
-    for i in range(len(tasks)):
-        task_info[i] = {'question': tasks[i][0],
-                        'answer': tasks[i][1],
-                        'addition': tasks[i][2]}
-    task_info = json.dumps(task_info)
+    tasks = json_dict['tasks']
+    text_tasks = {index: task for index, task in tasks.items() if task['type'][0] == 'text'}
+    paths = []
+    try:
+        for file in files.getlist('addition'):
+            if not file:
+                continue
+            file_path = './uploads/' + file.filename
+            file.save(file_path)
+            paths.append(file_path)
+        for index, text_task in enumerate(text_tasks.items()):
+            try:
+                text_task[1]['addition'][0] = paths[index]
+                tasks[text_task[0]] = text_task[1]
+            except IndexError:
+                break
+        print('tasks:', tasks)
+    except AttributeError:
+        pass
 
     variant = variants.Variant()
-    variant.secrecy = True if form.get('secrecy') == 'on' else False
-    variant.title = form.get('title')
-    variant.theme = form.get('theme')
+    variant.secrecy = json_dict['secrecy']
+    variant.title = json_dict['title']
+    variant.theme = json_dict['theme']
     variant.author_id = flask_login.current_user.id
-    variant.task = task_info
+    variant.task = json.dumps(tasks)
 
     db_sess.add(variant)
     db_sess.commit()
