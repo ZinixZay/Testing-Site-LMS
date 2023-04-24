@@ -5,29 +5,141 @@
     <script src="http://code.jquery.com/jquery-1.10.2.js"></script>
     <script src="http://code.jquery.com/ui/1.11.2/jquery-ui.js"></script>
     <script>
-        function addTask() {
-            console.log(2)
+        function swapCheckbox(checkbox) {
+            checkbox.checked = !checkbox.checked
+            console.log(checkbox.checked)
+        }
+    </script>
+    <script>
+        function addQuestion(button) {
+            let html = '<br>\
+            <div class="row">\
+            <div class="col-sm-10">\
+                <p>Ответ:</p>\
+            </div>\
+            <div class="col">\
+                <p>Правильный:</p>\
+            </div>\
+        </div>\
+            <div class="row">\
+            <div class="col-sm-10">\
+                <input type="text" class="form-control" style="display: block;" name="answer">\
+            </div>\
+            <div class="col form-check form-switch">\
+                <input type="checkbox" class="form-check-input"\
+                 style="transform: scale(1.5); position: relative; bottom: -15%; left: 20%;" name="isTrue">\
+            </div>\
+        </div><br>'
 
-            var num = document.getElementsByClassName('task-manager').length
-
-            html =
-            '<span>\
-                <b class="task-counter"></b>\
-                <button class="delete-btn btn btn-dark" style="float: right;">&ndash;</button><br>\
-            </span><br>\
-            <label>Вопрос:</label><br>\
-            <textarea name="question" class="form-control" rows="4"></textarea><br>\
-            <label>Правильный ответ:</label><br>\
-            <input type="text" name="answer" class="form-control"><br>\
-            <label>Вложения:</label><br>\
-            <input type="file" name="addition"><br>'
-
-            const div = document.createElement("div")
-            div.className = "alert alert-dark task-manager"
-            div.role = "alert"
-            taskStore = document.querySelector("#task-store")
+            let storage = button.parentElement
+            let div = document.createElement('div')
             div.innerHTML += html
-            taskStore.appendChild(div)
+            storage.appendChild(div)
+        }
+    </script>
+    <script>
+        function addTask(taskType) {
+            if (taskType == 'text') {
+                let num = document.getElementsByClassName('task-manager').length
+
+                html =
+                '<input type="hidden" name="type" value="text">\
+                <span>\
+                    <b class="task-counter"></b>\
+                    <button class="delete-btn btn btn-dark" style="float: right;">&ndash;</button><br>\
+                </span><br>\
+                <label>Вопрос:</label><br>\
+                <textarea name="question" class="form-control" rows="4"></textarea><br>\
+                <label>Правильный ответ:</label><br>\
+                <input type="text" name="answer" class="form-control"><br>\
+                <label>Вложения:</label><br>\
+                <input type="file" name="addition"><br>'
+
+                const div = document.createElement("div")
+                div.className = "alert alert-dark task-manager"
+                div.role = "alert"
+                taskStore = document.querySelector("#task-store")
+                div.innerHTML += html
+                taskStore.appendChild(div)
+            }
+            else {
+                let html = '<label>Вопрос:</label><br>\
+                <input type="hidden" name="type" value="test">\
+                <textarea name="question" class="form-control" rows="4"></textarea><br>\
+                <button type="button" class="btn btn-dark" onclick="addQuestion(this);">+</button>'
+
+                const div = document.createElement("div")
+                div.className = "alert alert-dark task-manager"
+                div.role = "alert"
+                taskStore = document.querySelector("#task-store")
+                div.innerHTML += html
+                taskStore.appendChild(div)
+            }
+        }
+    </script>
+    <script>
+        function getTaskTypeSelector() {
+            let select = document.querySelector("#type-select");
+            let value = (select) ? select.options[select.selectedIndex].value : null;
+            return value
+
+        }
+    </script>
+    <script>
+        function closeConfigurate() {
+            const elements = document.getElementsByClassName('modal');
+            while(elements.length > 0) {
+                elements[0].parentNode.removeChild(elements[0]);
+            }
+        }
+    </script>
+    <script>
+        function configurateTask() {
+            let html = '<div class="modal"> <div class="alert alert-secondary modal__window">\
+             <button class="btn btn-dark" onclick="closeConfigurate()"\
+              style="margin-left: auto; margin-right: 0; display: block;">x</button> <br> <label>Тип вопроса:</label>\
+               <select class="form-control" id="type-select"> <option value="text">С развернутым ответом</option>\
+                <option value="test">Тестовый</option>\
+                </select> <br> <span> <button class="btn btn-primary"\
+                 onclick="addTask(getTaskTypeSelector()); closeConfigurate()">\
+                Подтвердить</button> </span> </div>'
+            popupStore = document.querySelector("#popup-store")
+            popupStore.innerHTML += html
+        }
+    </script>
+    <script>
+        function sendJSON() {
+            alert('aa');
+            let taskStore = document.getElementById('task-store');
+
+            let xhr = new XMLHttpRequest();
+            url = "http://127.0.0.1:5000/add_variant";
+            xhr.open("POST", url, true);
+            xhr.setRequestHeader("Content-Type", "application/json");
+
+            let data = new Object();
+            data['title'] = document.getElementById('title').value;
+            data['theme'] = document.getElementById('theme').value;
+            data['secrecy'] = document.getElementById('flexSwitchCheckDefault').checked;
+            data['tasks'] = new Object();
+
+            for (let i = 0; i < taskStore.childNodes.length; i++) {
+                namedInputTypes = new Object();
+                for (let element of taskStore.childNodes[i].getElementsByTagName("*")) {
+                    if (element.tagName == "INPUT" || element.tagName == "TEXTAREA") {
+                        namedInputTypes[element.name] ||= [];
+
+                        if (element.type == "checkbox") {
+                             namedInputTypes[element.name].push(element.checked);
+                        }
+                        else {
+                            namedInputTypes[element.name].push(element.value);
+                        }
+                    }
+                }
+                data['tasks'][i] = namedInputTypes;
+            }
+            xhr.send(JSON.stringify(data));
         }
     </script>
     <script>
@@ -49,11 +161,34 @@
             content: counter(css-counter) ".";
         }
 
-    </style>
+        .modal {
+            position: fixed;
+            top: 0;
+            bottom: 0;
+            right: 0;
+            left: 0;
+            overflow: hidden;
+            overflow-y: auto;
+            -webkit-overflow-scrolling: touch;
+            display: flex;
+            flex-flow: column nowrap;
+            justify-content: center;
+            align-items: center;
+            z-index: 99;
+            padding: 30px 0;
+        }
 
+        .modal__window {
+            width: 600px;
+            max-width: 100%;
+        }
+
+    </style>
+    <p id="popup-store"></p>
     <br>
+
     <form action="" method="post" novalidate enctype="multipart/form-data" id="variant-form">
-        <div class="alert alert-primary">
+        <div class="alert alert-primary" id="variant-settings">
             <p>
                 {{ form.title.label }}<br>
                 {{ form.title(class="form-control") }}
@@ -75,7 +210,7 @@
         </div>
         <br>
         <div id="task-store"></div>
-        <p><button type="button" class="btn btn-dark" onclick="addTask()">+</button></p>
-        <p>{{ form.submit(type="submit", class="btn btn-primary") }}</p>
+        <p><button type="button" class="btn btn-dark" onclick="configurateTask();">+</button></p>
+        <p>{{ form.submit(type="submit", class="btn btn-primary", onclick="sendJSON();") }}</p>
     </form>
 {% endblock %}
