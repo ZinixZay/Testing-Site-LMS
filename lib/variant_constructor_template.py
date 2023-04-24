@@ -13,5 +13,5 @@ class ConstructorForm(flask_wtf.FlaskForm):
                                                   ("немецкий язык", "Немецкий Язык"),
                                                   ("французский язык", "Французский Язык"),
                                                   ("испанский язык", "Испанский Язык")])
-    secrecy = wtforms.StringField("Показывать ошибки ученикам после тестирования")
-    submit = wtforms.SubmitField('Отправить')
+    secrecy = wtforms.StringField("Показывать ошибки ученикам после выполнения задания")
+    submit = wtforms.SubmitField('Создать')

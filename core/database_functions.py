@@ -11,12 +11,11 @@ from data import variants
 def check_user_exists(login: str, email: str = '') -> bool:
     db_session.global_init("db/data.db")
     db_sess = db_session.create_session()
-    return db_sess.query(users.User).filter(users.User.login == login).all() or \
-           db_sess.query(users.User).filter(users.User.email == email).all()
+    return db_sess.query(users.User).filter(users.User.login == login).all()
 
 
 def registrate_person(person_info: dict) -> bool:
-    if check_user_exists(person_info['login'], person_info['email']):
+    if check_user_exists(person_info['login']):
         return False
     else:
         try:
@@ -24,8 +23,7 @@ def registrate_person(person_info: dict) -> bool:
             db_sess = db_session.create_session()
 
             user = users.User(role=person_info['role'],
-                        login=person_info['login'],
-                        email=person_info['email'])
+                              login=person_info['login'])
             user.set_password(person_info['password'])
 
             db_sess.add(user)
@@ -109,18 +107,18 @@ def get_variant_by_search_request(search_type: str, search_request: str) -> list
     db_sess = db_session.create_session()
 
     if search_type == 'id':
-        variant = db_sess.query(variants.Variant).\
+        variant = db_sess.query(variants.Variant). \
             filter(variants.Variant.id == int(search_request)).first()
         if variant:
             return [variant]
     elif search_type == 'title':
-        _variants = db_sess.query(variants.Variant).\
+        _variants = db_sess.query(variants.Variant). \
             filter(variants.Variant.title.contains(search_request)).all()
         _variants = [i for i in _variants]
         if _variants:
             return _variants
     elif search_type == 'theme':
-        _variants = db_sess.query(variants.Variant).\
+        _variants = db_sess.query(variants.Variant). \
             filter(variants.Variant.theme.contains(search_request.lower())).all()
         _variants = [i for i in _variants]
         if _variants:
@@ -131,7 +129,7 @@ def get_variant_by_search_request(search_type: str, search_request: str) -> list
 
 def get_answers_by_variant_id(variant_id: int):
     db_sess = db_session.create_session()
-    _answers = db_sess.query(answers.Answer).\
+    _answers = db_sess.query(answers.Answer). \
         filter(answers.Answer.id == variant_id,
                answers.Answer.answered_id == flask_login.current_user.id).all()
     tasks = json.loads(

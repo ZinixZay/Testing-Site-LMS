@@ -13,7 +13,6 @@ class User(SqlAlchemyBase, UserMixin):
     role = sqlalchemy.Column(sqlalchemy.String)
     login = sqlalchemy.Column(sqlalchemy.String, unique=True)
     hashed_password = sqlalchemy.Column(sqlalchemy.String)
-    email = sqlalchemy.Column(sqlalchemy.String, unique=True)
 
     def set_password(self, password):
         self.hashed_password = generate_password_hash(password)
@@ -25,7 +24,6 @@ class User(SqlAlchemyBase, UserMixin):
         res = {
             "id": self.id,
             "role": self.role,
-            "login": self.login,
-            "email": self.email
+            "login": self.login
         }
         return res

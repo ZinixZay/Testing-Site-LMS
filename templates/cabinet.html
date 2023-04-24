@@ -2,16 +2,16 @@
 
 {% block content %}
     <div class="alert alert-info" role="alert">
-        Login: {{user.login}}
+        Логин: {{user.login}}
     </div>
     <div class="alert alert-dark" role="alert">
-        Role: {{user.role.capitalize()}}
+        Роль: {{user.role.capitalize()}}
     </div>
-    {% if user.role == "teacher" %}
-        <a type="button" href="/variants" class="btn btn-info center-block btn-lg">Мои варианты</a>
-        <a type="button" href="/add_variant" class="btn btn-info center-block btn-lg">Добавить вариант</a>
+    {% if user.role == "Учитель" %}
+        <a type="button" href="/variants" class="btn btn-info center-block btn-lg">Мои задания</a>
+        <a type="button" href="/add_variant" class="btn btn-info center-block btn-lg">Добавить задание</a>
     {% else %}
-        <a type="button" href="/search_variant" class="btn btn-info center-block btn-lg">Искать варианты</a>
+        <a type="button" href="/search_variant" class="btn btn-info center-block btn-lg">Искать задания</a>
     {% endif %}
     <a type="button" href="/logout" class="btn btn-danger center-block btn-lg">Выйти из аккаунта</a>
 {% endblock %}
