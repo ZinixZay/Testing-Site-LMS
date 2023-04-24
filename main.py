@@ -13,6 +13,17 @@ from lib import register_template
 from lib import search_variant_template
 from lib import variant_constructor_template
 
+
+class AddVariantDataStorage:
+    def __init__(self):
+        self.json_response = {}
+        self.files = None
+
+    def clear(self):
+        self.json_response = {}
+        self.files = None
+
+
 app = flask.Flask(__name__)
 db_session.global_init("db/data.db")
 dotenv.load_dotenv(os.path.join(os.path.dirname(__file__), '.env'))
@@ -20,6 +31,8 @@ app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY')
 
 login_manager = flask_login.LoginManager()
 login_manager.init_app(app)
+
+add_variant_data_storage = AddVariantDataStorage()
 
 
 @login_manager.user_loader
@@ -88,6 +101,8 @@ def variants():
 
 @app.route('/add_variant', methods=['GET', 'POST'])
 def add_variant():
+    global request_json
+
     if flask.request.method == 'GET':
         try:
             flask_login.current_user.role
@@ -97,9 +112,19 @@ def add_variant():
         return 'Вы не учитель', 400
 
     form = variant_constructor_template.ConstructorForm()
+    if flask.request.content_type == "application/json":
+        print('application/json!!!')
+        add_variant_data_storage.json_response = flask.request.get_json(silent=True)
     if flask.request.method == "POST" and form.title.validate(form):
-        database_functions.add_variant(flask.request.form, flask.request.files)
+        if flask.request.files:
+            add_variant_data_storage.files = flask.request.files
+        print("response_json:", add_variant_data_storage.json_response)
+        print('files:', add_variant_data_storage.files)
+        database_functions.add_variant(add_variant_data_storage.json_response, add_variant_data_storage.files)
+
         return flask.redirect('/')
+
+    add_variant_data_storage.clear()
     return flask.render_template('add_variant.html', form=form)
 
 
@@ -115,7 +140,6 @@ def solve_variant(variant_id: int):
         return flask.redirect('/')
     if flask.request.method == 'GET':
         tasks = database_functions.get_tasks_by_variant_id(variant_id)
-        print(tasks)
         return flask.render_template('solve_variant.html', tasks=tasks)
 
 
@@ -135,6 +159,12 @@ def result(variant_id: int):
         data = database_functions.compare_variant(variant_id, current_user)
         return flask.render_template('variant_result.html', answers=data)
     return ''
+
+
+@app.route('/test', methods=['GET', 'POST'])
+def test():
+    if flask.request.method == "POST":
+        return flask.render_template('test.html')
 
 
 if __name__ == '__main__':
