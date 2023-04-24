@@ -35,6 +35,11 @@ def index():
     return flask.redirect('/login')
 
 
+@app.route('/faq')
+def faq():
+    return flask.render_template('faq.html')
+
+
 @app.route('/register', methods=['GET', 'POST'])
 def register():
     if current_user.is_authenticated:
