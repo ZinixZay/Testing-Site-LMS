@@ -48,6 +48,11 @@ def index():
     return flask.redirect('/login')
 
 
+@app.route('/faq')
+def faq():
+    return flask.render_template('faq.html')
+
+
 @app.route('/register', methods=['GET', 'POST'])
 def register():
     if current_user.is_authenticated:
@@ -108,7 +113,7 @@ def add_variant():
             flask_login.current_user.role
         except AttributeError:
             return 'Вы не залогинены', 400
-    if flask.request.method == 'GET' and not flask_login.current_user.role == 'teacher':
+    if flask.request.method == 'GET' and not flask_login.current_user.role == 'Учитель':
         return 'Вы не учитель', 400
 
     form = variant_constructor_template.ConstructorForm()
