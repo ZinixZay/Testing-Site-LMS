@@ -154,11 +154,11 @@ def solve_variant(variant_id: int):
 @app.route('/search_variant', methods=['GET', 'POST'])
 def search_variant():
     form = search_variant_template.SearchForm()
-    variants = []
+    _variants = []
     if form.validate_on_submit():
-        variants = database_functions.get_variant_by_search_request(flask.request.form.get('search_type'),
-                                                                    flask.request.form.get('search_request'))
-    return flask.render_template('search_variant.html', form=form, variants=variants)
+        _variants = database_functions.get_variant_by_search_request(flask.request.form.get('search_type'),
+                                                                     flask.request.form.get('search_request'))
+    return flask.render_template('search_variant.html', form=form, variants=_variants)
 
 
 @app.route('/result/<variant_id>', methods=['GET'])
@@ -167,12 +167,6 @@ def result(variant_id: int):
         data = database_functions.compare_variant(variant_id, current_user)
         return flask.render_template('variant_result.html', answers=data)
     return ''
-
-
-@app.route('/test', methods=['GET', 'POST'])
-def test():
-    if flask.request.method == "POST":
-        return flask.render_template('test.html')
 
 
 if __name__ == '__main__':
