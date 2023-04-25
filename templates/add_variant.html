@@ -63,7 +63,9 @@
                 taskStore.appendChild(div)
             }
             else {
-                let html = '<label>Вопрос:</label><br>\
+                let html = '<b class="task-counter"></b>\
+                <button class="delete-btn btn btn-dark" style="float: right;">&ndash;</button><br><br>\
+                <label>Вопрос:</label><br>\
                 <input type="hidden" name="type" value="test">\
                 <textarea name="question" class="form-control" rows="4"></textarea><br>\
                 <button type="button" class="btn btn-dark" onclick="addQuestion(this);">+</button>'

@@ -126,6 +126,7 @@ def add_variant():
             add_variant_data_storage.files = flask.request.files
         print("response_json:", add_variant_data_storage.json_response)
         print('files:', add_variant_data_storage.files)
+    if add_variant_data_storage.json_response:
         database_functions.add_variant(add_variant_data_storage.json_response, add_variant_data_storage.files)
 
         return flask.redirect('/')
