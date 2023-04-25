@@ -120,6 +120,7 @@ def add_variant():
     if flask.request.content_type == "application/json":
         print('application/json!!!')
         add_variant_data_storage.json_response = flask.request.get_json(silent=True)
+        return 'None'
     if flask.request.method == "POST" and form.title.validate(form):
         if flask.request.files:
             add_variant_data_storage.files = flask.request.files
@@ -145,6 +146,8 @@ def solve_variant(variant_id: int):
         return flask.redirect('/')
     if flask.request.method == 'GET':
         tasks = database_functions.get_tasks_by_variant_id(variant_id)
+        for i in tasks.values():
+            print(i)
         return flask.render_template('solve_variant.html', tasks=tasks)
 
 
