@@ -22,22 +22,48 @@
             <div class="alert alert-dark task-manager">
                 <b class="task-counter"></b><br>
 
-                {% if task['question'] %}
-                    <div>{{ task['question'] }}</div><br>
-                {% else %}
-                    <br>
-                {% endif %}
+                {% if task['type'][0] == 'text' %}
+                    <input type="hidden" name="type" value="text">
 
-                {% if task['addition'] %}
-                    <p>
-                        <a href="{{ '../' + task['addition'] }}" target="_blank">
-                            <img src="{{ '../' + task['addition'] }}" width="400" height="400" onclick="enlargeImage()">
-                        </a>
-                    </p>
-                {% endif %}
+                    {% if task['question'][0] %}
+                        <h2>{{ task['question'][0] }}</h2><br>
+                    {% else %}
+                        <br>
+                    {% endif %}
 
-                <div>Ответ:</div>
-                <input type="text" name="answer"><br>
+                    {% if task['addition'][0] %}
+                        <p>
+                            <a href="{{ '../' + task['addition'][0] }}" target="_blank">
+                                <img src="{{ '../' + task['addition'][0] }}" width="400" height="400" onclick="enlargeImage()">
+                            </a>
+                        </p>
+                        <br>
+                    {% endif %}
+
+                    <div>Ответ:</div>
+                    <input type="text" name="answer" class="form-control">
+                {% elif task['type'][0] == 'test' %}
+                    <input type="hidden" name="type" value="test">
+
+                    {% if task['question'][0] %}
+                        <h2>{{ task['question'][0] }}</h2>
+                    {% else %}
+                        <br>
+                    {% endif %}
+
+                    {% for answer in task['answer'] %}
+                        <br>
+                        <div class="row">
+                            <div class="col-sm-10">
+                                <h4>{{ answer }}</h4>
+                            </div>
+                            <div class="col form-check form-switch">
+                                <input type="checkbox" class="form-check-input"
+                                 style="transform: scale(1.5); position: relative; bottom: -15%; left: 20%;" name="isTrue">
+                            </div>
+                        </div>
+                    {% endfor %}
+                {% endif %}
             </div>
         {% endfor %}
         </div>
