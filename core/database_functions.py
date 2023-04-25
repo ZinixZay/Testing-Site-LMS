@@ -8,15 +8,14 @@ from data import users
 from data import variants
 
 
-def check_user_exists(login: str, email: str = '') -> bool:
+def check_user_exists(login: str) -> bool:
     db_session.global_init("db/data.db")
     db_sess = db_session.create_session()
-    return db_sess.query(users.User).filter(users.User.login == login).all() or \
-           db_sess.query(users.User).filter(users.User.email == email).all()
+    return db_sess.query(users.User).filter(users.User.login == login).all()
 
 
 def registrate_person(person_info: dict) -> bool:
-    if check_user_exists(person_info['login'], person_info['email']):
+    if check_user_exists(person_info['login']):
         return False
     else:
         try:
@@ -24,8 +23,7 @@ def registrate_person(person_info: dict) -> bool:
             db_sess = db_session.create_session()
 
             user = users.User(role=person_info['role'],
-                        login=person_info['login'],
-                        email=person_info['email'])
+                        login=person_info['login'])
             user.set_password(person_info['password'])
 
             db_sess.add(user)
@@ -175,7 +173,7 @@ def compare_variant(variant_id, user) -> list:
         )
         result = {'login': login, 'answers': []}
         for _curr_true_answer, _curr_login_answer in zip(_true_answer.items(), answer_info.values()):
-            if _curr_true_answer[1]['answer'] == _curr_login_answer:
+            if _curr_true_answer[1]['answer'].lower() == _curr_login_answer.lower():
                 correctness = True
             else:
                 correctness = False

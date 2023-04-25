@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <script src="http://code.jquery.com/jquery-1.10.2.js"></script>
+    <script src="http://code.jquery.com/ui/1.11.2/jquery-ui.js"></script>
+    <script>
+        function sendJSON() {
+            let xhr = new XMLHttpRequest();
+            url = "http://127.0.0.1:5000/test";
+            xhr.open("POST", url, true);
+            xhr.setRequestHeader("Content-Type", "application/json");
+            var data = JSON.stringify({ "name": "vakye", "lastname": "kik" });
+            xhr.send(data);
+        }
+    </script>
+
+    <div class="alert alert-primary container">
+        <button class="btn btn-dark" onclick="sendJSON();">+</button>
+        <br>
+    </div>
+{% endblock %}

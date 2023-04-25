@@ -28,6 +28,11 @@ def load_user(user_id):
     return db_sess.query(users.User).get(user_id)
 
 
+@app.route('/faq')
+def faq():
+    return flask.render_template('faq.html')
+
+
 @app.route('/')
 def index():
     if current_user.is_authenticated:
@@ -115,7 +120,6 @@ def solve_variant(variant_id: int):
         return flask.redirect('/')
     if flask.request.method == 'GET':
         tasks = database_functions.get_tasks_by_variant_id(variant_id)
-        print(tasks)
         return flask.render_template('solve_variant.html', tasks=tasks)
 
 
