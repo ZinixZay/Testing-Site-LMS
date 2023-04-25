@@ -1,6 +1,38 @@
 {% extends "base.html" %}
 
 {% block content %}
+    <script>
+        function sendJSON() {
+            alert('aaa');
+            let taskStore = document.getElementById('task-store');
+
+            let xhr = new XMLHttpRequest();
+            url = document.URL;
+            xhr.open("POST", url, true);
+            xhr.setRequestHeader("Content-Type", "application/json");
+
+            let data = new Object();
+            for (let i = 0; i < taskStore.children.length; i++) {
+                namedInputTypes = new Object();
+                for (let element of taskStore.children[i].getElementsByTagName("*")) {
+                    if (element.tagName == "INPUT" || element.tagName == "TEXTAREA") {
+                        namedInputTypes[element.name] ||= [];
+
+                        if (element.type == "checkbox") {
+                             namedInputTypes[element.name].push(element.checked);
+                        }
+                        else {
+                            namedInputTypes[element.name].push(element.value);
+                        }
+                    }
+                }
+                data[i] = namedInputTypes;
+            }
+            console.log(data)
+            xhr.send(JSON.stringify(data));
+        }
+    </script>
+
     <style>
         #task-store {
             counter-reset: css-counter 0;
@@ -16,7 +48,7 @@
     </style>
 
     <br>
-    <form action="" method="post" novalidate>
+    <form action="" method="post" novalidate enctype="multipart/form-data">
         <div id="task-store">
         {% for task in tasks.values() %}
             <div class="alert alert-dark task-manager">
@@ -59,7 +91,7 @@
                             </div>
                             <div class="col form-check form-switch">
                                 <input type="checkbox" class="form-check-input"
-                                 style="transform: scale(1.5); position: relative; bottom: -15%; left: 20%;" name="isTrue">
+                                 style="transform: scale(1.5); position: relative; bottom: -15%; left: 20%;" name="answer">
                             </div>
                         </div>
                     {% endfor %}
@@ -67,6 +99,6 @@
             </div>
         {% endfor %}
         </div>
-        <p><input type="submit" class="btn btn-primary"></p>
+        <p><input type="submit" class="btn btn-primary" onclick="sendJSON();"></p>
     </form>
 {% endblock %}
