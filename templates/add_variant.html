@@ -113,7 +113,7 @@
             let taskStore = document.getElementById('task-store');
 
             let xhr = new XMLHttpRequest();
-            url = "http://127.0.0.1:5000/add_variant";
+            url = document.URL;
             xhr.open("POST", url, true);
             xhr.setRequestHeader("Content-Type", "application/json");
 
