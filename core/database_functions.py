@@ -164,7 +164,7 @@ def compare_variant(variant_id, user) -> list:
     )
     _answers = db_sess.query(answers.Answer).filter(answers.Answer.variant_id == variant_id).all()
 
-    if user.role == 'student':  # для ученика получаем последнюю работу
+    if user.role == 'Ученик':  # для ученика получаем последнюю работу
         _answers = [_answers[-1]]
 
     for ans in _answers:
@@ -199,3 +199,8 @@ def compare_variant(variant_id, user) -> list:
                                       'is_correct': correctness})
         results.append(result)
     return results
+
+
+def get_variant_secrecy(variant_id: int):
+    db_sess = db_session.create_session()
+    return db_sess.query(variants.Variant.secrecy).filter(answers.Answer.id == variant_id).all()
