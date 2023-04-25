@@ -48,6 +48,7 @@ def add_variant(json_dict: dict, files):
         return
 
     db_sess = db_session.create_session()
+    print('DB WRITING')
 
     tasks = json_dict['tasks']
     text_tasks = {index: task for index, task in tasks.items() if task['type'][0] == 'text'}
@@ -90,17 +91,14 @@ def get_tasks_by_variant_id(variant_id: int):
     return task
 
 
-def add_answers(form, variant_id: int):
+def add_answers(json_dict: dict, variant_id: int):
     db_sess = db_session.create_session()
     answer = answers.Answer()
     answer.answered_id = flask_login.current_user.id
     answer.variant_id = variant_id
     _answer = {}
 
-    for index, answer_text in enumerate(form.getlist('answer')):
-        _answer[str(index)] = answer_text
-
-    answer.answer = str(_answer)
+    answer.answer = json.dumps(json_dict)
 
     db_sess.add(answer)
     db_sess.commit()
@@ -175,13 +173,29 @@ def compare_variant(variant_id, user) -> list:
             db_sess.query(answers.Answer.answer).filter(answers.Answer.id == ans.id).one()[0].replace("'", '"')
         )
         result = {'login': login, 'answers': []}
-        for _curr_true_answer, _curr_login_answer in zip(_true_answer.items(), answer_info.values()):
-            if _curr_true_answer[1]['answer'] == _curr_login_answer:
-                correctness = True
-            else:
-                correctness = False
-            result['answers'].append({'question': _curr_true_answer[1]['question'],
-                                      'answer': _curr_login_answer,
+        for _curr_answer, _curr_login_answer in zip(_true_answer.items(), answer_info.values()):
+            if _curr_answer[1]['type'][0] == 'text':
+                _curr_true_answer = _curr_answer[1]['answer'][0]
+                if _curr_true_answer.lower() == _curr_login_answer['answer'][0].lower():
+                    correctness = True
+                else:
+                    correctness = False
+                showing_answer = _curr_login_answer['answer'][0]
+            else:  # if type == 'test'
+                _curr_true_answer = _curr_answer[1]['isTrue']
+                if _curr_true_answer == _curr_login_answer['answer']:
+                    correctness = True
+                else:
+                    correctness = False
+                showing_answer = '    '.join(
+                    [_curr_answer[1]['answer'][i]
+                     for i in range(len(_curr_answer[1]['answer']))
+                     if _curr_login_answer['answer'][i]
+                     ]
+                )
+
+            result['answers'].append({'question': _curr_answer[1]['question'][0],
+                                      'answer': showing_answer,
                                       'is_correct': correctness})
         results.append(result)
     return results
