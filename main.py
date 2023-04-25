@@ -142,12 +142,12 @@ def return_image(filename: str):
 @app.route('/solve_variant/<variant_id>', methods=['GET', 'POST'])
 def solve_variant(variant_id: int):
     if flask.request.method == "POST":
-        database_functions.add_answers(flask.request.form, variant_id)
+        if flask.request.content_type == "application/json":
+            print('answer json:', flask.request.get_json(silent=True))
+            database_functions.add_answers(flask.request.get_json(silent=True), variant_id)
         return flask.redirect('/')
     if flask.request.method == 'GET':
         tasks = database_functions.get_tasks_by_variant_id(variant_id)
-        for i in tasks.values():
-            print(i)
         return flask.render_template('solve_variant.html', tasks=tasks)
 
 
