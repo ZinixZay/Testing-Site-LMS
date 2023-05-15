@@ -1,6 +1,22 @@
 {% extends "base.html" %}
 
 {% block content %}
+    <script src="http://code.jquery.com/jquery-2.0.2.min.js"></script>
+    <script>
+        $(document).ready(function(){
+            //Скрыть PopUp при загрузке страницы
+            PopUpHide();
+        });
+        //Функция отображения PopUp
+        function PopUpShow(){
+            $("#popup1").show();
+        }
+        //Функция скрытия PopUp
+        function PopUpHide(){
+            $("#popup1").hide();
+        }
+    </script>
+
     <div class="alert alert-info" role="alert">
         Логин: {{user.login}}
     </div>
@@ -13,5 +29,16 @@
     {% else %}
         <a type="button" href="/search_variant" class="btn btn-info center-block btn-lg">Искать задания</a>
     {% endif %}
-    <a type="button" href="/logout" class="btn btn-danger center-block btn-lg">Выйти из аккаунта</a>
+    <a type="button" class="btn btn-danger center-block btn-lg" onclick="window.modal.showModal();">
+        Выйти из аккаунта
+    </a>
+
+    <dialog id="modal" style="width: 30%; border-width: 0px; border-radius: 10px;">
+        <div>
+            <h1>Вы уверены?</h1><br><br>
+            <a type="button" href="/logout" class="btn btn-danger btn-lg" style="width: 50%;">Выйти</a>
+            <button type="button" onclick="window.modal.close();" class="btn btn-info btn-lg" style="width: 45%;">Закрыть</button>
+        </div>
+    </dialog>
+
 {% endblock %}
