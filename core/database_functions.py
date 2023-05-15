@@ -175,11 +175,7 @@ def compare_variant(variant_id, user) -> list:
         result = {'login': login, 'answers': []}
         for _curr_answer, _curr_login_answer in zip(_true_answer.items(), answer_info.values()):
             if _curr_answer[1]['type'][0] == 'text':
-                _curr_true_answer = _curr_answer[1]['answer'][0]
-                if _curr_true_answer.lower() == _curr_login_answer['answer'][0].lower():
-                    correctness = True
-                else:
-                    correctness = False
+                correctness = None
                 showing_answer = _curr_login_answer['answer'][0]
             else:  # if type == 'test'
                 _curr_true_answer = _curr_answer[1]['isTrue']
