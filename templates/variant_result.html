@@ -5,10 +5,10 @@
         <div class="alert alert-dark">
             <p>Ученик:</p>
             <h3 style="font-weight:bold">{{ answer['login'] }}</h3>
-            <div class="alert alert-dark">
+            <div class="alert c">
                 <table class="table">
                     <thead>
-                        <tr class="bg-secondary">
+                        <tr class="bg-info">
                             <th scope="col">Вопрос</th>
                             <th scope="col">Ответ</th>
                         </tr>
@@ -17,6 +17,11 @@
                         {% for row in answer['answers'] %}
                             {% if row['is_correct'] %}
                                 <tr class="bg-success">
+                                    <td scope="col">{{ row['question'] }}</td>
+                                    <td scope="col">{{ row['answer'] }}</td>
+                                </tr>
+                            {% elif row['is_correct'] == None %}
+                                <tr class="bg-secondary">
                                     <td scope="col">{{ row['question'] }}</td>
                                     <td scope="col">{{ row['answer'] }}</td>
                                 </tr>
