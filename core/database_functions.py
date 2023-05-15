@@ -62,7 +62,7 @@ def add_variant(json_dict: dict, files):
             paths.append(file_path)
         for index, text_task in enumerate(text_tasks.items()):
             try:
-                text_task[1]['addition'][index] = paths[index]
+                text_task[1]['addition'][0] = paths[index]
                 tasks[text_task[0]] = text_task[1]
             except IndexError:
                 text_task[1]['addition'][index] = None
