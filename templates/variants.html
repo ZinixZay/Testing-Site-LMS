@@ -13,7 +13,7 @@
             <h3>{{ loop.index }}. "{{ var.title }}"</h3>
             <label>Идентификатор: {{ var.id }}</label>
             <br>
-            <a href="/result/{{ loop.index }}" class="btn btn-primary">Get result</a>
+            <a href="/result/{{ var.id }}" class="btn btn-primary">Get result</a>
         </div>
         <br>
     {% endfor %}
