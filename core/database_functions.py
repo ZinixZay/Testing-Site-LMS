@@ -62,13 +62,12 @@ def add_variant(json_dict: dict, files):
             file_path = './uploads/' + file.filename
             file.save(file_path)
             paths.append(file_path)
-        for index, text_task in enumerate(text_tasks.items()):
-            try:
-                text_task[1]['addition'][0] = paths[index]
-                tasks[text_task[0]] = text_task[1]
-            except IndexError:
-                text_task[1]['addition'][index] = None
-            text_task[1]['addition'] = [i for i in text_task[1]['addition'] if i is not None]
+        for index, task in enumerate(tasks.items()):
+            if task[1]['addition'][0]:
+                task[1]['addition'][0] = './uploads/' + task[1]['addition'][0].split('\\')[-1]
+            else:
+                task[1]['addition'][0] = []
+            tasks[task[0]] = task[1]
         print('tasks:', tasks)
     except AttributeError:
         pass
