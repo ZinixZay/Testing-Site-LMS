@@ -23,7 +23,9 @@ def registrate_person(person_info: dict) -> bool:
             db_sess = db_session.create_session()
 
             user = users.User(role=person_info['role'],
-                              login=person_info['login'])
+                              login=person_info['login'],
+                              name=person_info['name'],
+                              surname=person_info['surname'])
             user.set_password(person_info['password'])
 
             db_sess.add(user)
@@ -168,11 +170,12 @@ def compare_variant(variant_id, user) -> list:
         _answers = [_answers[-1]]
 
     for ans in _answers:
-        login = db_sess.query(users.User.login).filter(users.User.id == ans.answered_id).one()[0]
+        name = db_sess.query(users.User.name).filter(users.User.id == ans.answered_id).one()[0]
+        surname = db_sess.query(users.User.surname).filter(users.User.id == ans.answered_id).one()[0]
         answer_info = json.loads(
             db_sess.query(answers.Answer.answer).filter(answers.Answer.id == ans.id).one()[0].replace("'", '"')
         )
-        result = {'login': login, 'answers': []}
+        result = {'full_name': name + ' ' + surname, 'answers': []}
         for _curr_answer, _curr_login_answer in zip(_true_answer.items(), answer_info.values()):
             if _curr_answer[1]['type'][0] == 'text':
                 correctness = None
