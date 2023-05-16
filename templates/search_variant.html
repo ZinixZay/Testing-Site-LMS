@@ -25,7 +25,10 @@
         </div>
         <p>{{ form.submit(type="submit", class="btn btn-primary") }}</p>
     </form>
-
+{% if not variants %}
+<p class="text-center">Не удается найти заданий по вашему запросу. Проверьте введенные данные и категорию поиска
+</p>
+{% else %}
     {% for variant in variants %}
         <div class="alert alert-info">
             <h2>{{ variant.title }}</h2><br>
@@ -44,4 +47,5 @@
             <a class="btn btn-primary" role="button" href="/solve_variant/{{ variant.id }}">Перейти</a>
         </div>
     {% endfor %}
+    {% endif %}
 {% endblock %}
