@@ -10,7 +10,8 @@
 {% else %}
     {% for var in variants %}
         <div class="alert alert-primary">
-            <h3>{{loop.index}}. {{var.title}}</h3>
+            <h3>{{ loop.index }}. "{{ var.title }}"</h3>
+            <label>Идентификатор: {{ var.id }}</label>
             <br>
             <a href="/result/{{ loop.index }}" class="btn btn-primary">Get result</a>
         </div>
