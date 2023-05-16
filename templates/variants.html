@@ -1,6 +1,13 @@
 {% extends "base.html" %}
 
 {% block content %}
+{% if not variants %}
+<p class="text-center">Видимо вы еще не создали ни одного задания. Исправим это!
+</p>
+<div class="d-flex justify-content-center">
+    <a href="/add_variant" type="button" class="btn btn-success">Создать задание!</a>
+</div>
+{% else %}
     {% for var in variants %}
         <div class="alert alert-primary">
             <h3>{{loop.index}}. {{var.title}}</h3>
@@ -9,4 +16,5 @@
         </div>
         <br>
     {% endfor %}
+{% endif %}
 {% endblock %}
