@@ -14,7 +14,7 @@
 
             <div>
                 {{ form.search_request.label }}
-                {{ form.search_request(class="form-control") }}
+                {{ form.search_request(class="form-control", id="search-request") }}
                 {% for error in form.search_request.errors %}
                     <br>
                     <div class="alert alert-danger" role="alert">
@@ -26,8 +26,12 @@
         <p>{{ form.submit(type="submit", class="btn btn-primary") }}</p>
     </form>
 {% if not variants %}
-<p class="text-center">Не удается найти заданий по вашему запросу. Проверьте введенные данные и категорию поиска
-</p>
+    <dialog id="modal" style="width: 30%; border-width: 0px; border-radius: 10px;" class="bg-light">
+        <h1 class="text-center">Здесь ничего нет</h1><br>
+        <button type="button" onclick="window.modal.close();" class="btn btn-info btn-lg" style="width: 99%;">
+            Закрыть
+        </button>
+    </dialog>
 {% else %}
     {% for variant in variants %}
         <div class="alert alert-info">
@@ -48,4 +52,11 @@
         </div>
     {% endfor %}
     {% endif %}
+
+        <script>
+            var searchReq = document.getElementById("search-request");
+            if (searchReq.value != '') {
+                window.modal.show();
+            }
+        </script>
 {% endblock %}
