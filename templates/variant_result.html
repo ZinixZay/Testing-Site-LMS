@@ -1,6 +1,13 @@
 {% extends "base.html" %}
 
 {% block content %}
+{% if not answers %}
+<p class="text-center">Видимо на это задание еще нет ни одного ответа
+</p>
+<div class="d-flex justify-content-center">
+    <a href="/variants" type="button" class="btn btn-success">Понятно!</a>
+</div>
+{% else %}
     {% for answer in answers %}
         <div class="alert alert-dark">
             <p>Ученик:</p>
@@ -38,4 +45,5 @@
         </div>
     {% endfor %}
     <br>
+    {% endif %}
 {% endblock %}
