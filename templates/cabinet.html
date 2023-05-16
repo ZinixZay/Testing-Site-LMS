@@ -1,22 +1,6 @@
 {% extends "base.html" %}
 
 {% block content %}
-    <script src="http://code.jquery.com/jquery-2.0.2.min.js"></script>
-    <script>
-        $(document).ready(function(){
-            //Скрыть PopUp при загрузке страницы
-            PopUpHide();
-        });
-        //Функция отображения PopUp
-        function PopUpShow(){
-            $("#popup1").show();
-        }
-        //Функция скрытия PopUp
-        function PopUpHide(){
-            $("#popup1").hide();
-        }
-    </script>
-
     <div class="alert alert-info" role="alert">
         Логин: {{user.login}}
     </div>
