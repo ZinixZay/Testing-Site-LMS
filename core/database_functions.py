@@ -108,6 +108,10 @@ def get_variant_by_search_request(search_type: str, search_request: str) -> list
     db_sess = db_session.create_session()
 
     if search_type == 'id':
+        try:
+            int(search_request)
+        except ValueError:
+            return []
         variant = db_sess.query(variants.Variant). \
             filter(variants.Variant.id == int(search_request)).first()
         if variant:
