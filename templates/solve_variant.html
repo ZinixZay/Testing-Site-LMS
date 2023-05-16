@@ -83,6 +83,15 @@
                         <br>
                     {% endif %}
 
+                    {% if task['addition'][0] %}
+                        <p>
+                            <a href="{{ '../' + task['addition'][0] }}" target="_blank">
+                                <img src="{{ '../' + task['addition'][0] }}" width="400" height="400" onclick="enlargeImage()">
+                            </a>
+                        </p>
+                        <br>
+                    {% endif %}
+
                     {% for answer in task['answer'] %}
                         <br>
                         <div class="row">
